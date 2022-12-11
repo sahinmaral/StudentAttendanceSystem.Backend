@@ -1,0 +1,12 @@
+C:\Users\sahin\Desktop\StudentAttendanceSystem\backend\StudentAttendanceSystem\StudentAttendanceSystem.Core\bin\Debug\net6.0\StudentAttendanceSystem.Core.deps.json
+C:\Users\sahin\Desktop\StudentAttendanceSystem\backend\StudentAttendanceSystem\StudentAttendanceSystem.Core\bin\Debug\net6.0\StudentAttendanceSystem.Core.dll
+C:\Users\sahin\Desktop\StudentAttendanceSystem\backend\StudentAttendanceSystem\StudentAttendanceSystem.Core\bin\Debug\net6.0\StudentAttendanceSystem.Core.pdb
+C:\Users\sahin\Desktop\StudentAttendanceSystem\backend\StudentAttendanceSystem\StudentAttendanceSystem.Core\obj\Debug\net6.0\StudentAttendanceSystem.Core.csproj.AssemblyReference.cache
+C:\Users\sahin\Desktop\StudentAttendanceSystem\backend\StudentAttendanceSystem\StudentAttendanceSystem.Core\obj\Debug\net6.0\StudentAttendanceSystem.Core.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\sahin\Desktop\StudentAttendanceSystem\backend\StudentAttendanceSystem\StudentAttendanceSystem.Core\obj\Debug\net6.0\StudentAttendanceSystem.Core.AssemblyInfoInputs.cache
+C:\Users\sahin\Desktop\StudentAttendanceSystem\backend\StudentAttendanceSystem\StudentAttendanceSystem.Core\obj\Debug\net6.0\StudentAttendanceSystem.Core.AssemblyInfo.cs
+C:\Users\sahin\Desktop\StudentAttendanceSystem\backend\StudentAttendanceSystem\StudentAttendanceSystem.Core\obj\Debug\net6.0\StudentAttendanceSystem.Core.csproj.CoreCompileInputs.cache
+C:\Users\sahin\Desktop\StudentAttendanceSystem\backend\StudentAttendanceSystem\StudentAttendanceSystem.Core\obj\Debug\net6.0\StudentAttendanceSystem.Core.dll
+C:\Users\sahin\Desktop\StudentAttendanceSystem\backend\StudentAttendanceSystem\StudentAttendanceSystem.Core\obj\Debug\net6.0\refint\StudentAttendanceSystem.Core.dll
+C:\Users\sahin\Desktop\StudentAttendanceSystem\backend\StudentAttendanceSystem\StudentAttendanceSystem.Core\obj\Debug\net6.0\StudentAttendanceSystem.Core.pdb
+C:\Users\sahin\Desktop\StudentAttendanceSystem\backend\StudentAttendanceSystem\StudentAttendanceSystem.Core\obj\Debug\net6.0\ref\StudentAttendanceSystem.Core.dll
