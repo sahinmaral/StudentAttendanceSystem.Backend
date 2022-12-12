@@ -60,7 +60,25 @@ namespace StudentAttendanceSystem.WebAPI.Controllers
         [HttpPut("add")]
         public IActionResult Add(LectureAddDto dto)
         {
-            var result = _lectureService.Add(dto);
+            var result = _lectureService.Add(new Lecture()
+            {
+                Departments = dto.DepartmentIds.Select(x=> new Department()
+                {
+                    DepartmentId = x
+                }).ToList(),
+                LectureHours = dto.LectureHourIds.Select(x => new LectureHour()
+                {
+                    LectureHourId = x
+                }).ToList(),
+                Instructors = dto.InstructorIds.Select(x=> new Instructor()
+                {
+                    InstructorId = x
+                }).ToList(),
+                LectureName = dto.LectureName,
+                LectureCode = dto.LectureCode,
+                LectureLanguage = dto.LectureLanguage,
+                LectureClassCode = dto.LectureClassCode,
+            });
 
             if (!result.Success)
             {
@@ -74,7 +92,25 @@ namespace StudentAttendanceSystem.WebAPI.Controllers
         [HttpPut("addAsync")]
         public async Task<IActionResult> AddAsync(LectureAddDto dto)
         {
-            var result = await _lectureService.AddAsync(dto);
+            var result = await _lectureService.AddAsync(new Lecture()
+            {
+                Departments = dto.DepartmentIds.Select(x => new Department()
+                {
+                    DepartmentId = x
+                }).ToList(),
+                LectureHours = dto.LectureHourIds.Select(x => new LectureHour()
+                {
+                    LectureHourId = x
+                }).ToList(),
+                Instructors = dto.InstructorIds.Select(x => new Instructor()
+                {
+                    InstructorId = x
+                }).ToList(),
+                LectureName = dto.LectureName,
+                LectureCode = dto.LectureCode,
+                LectureLanguage = dto.LectureLanguage,
+                LectureClassCode = dto.LectureClassCode,
+            });
 
             if (!result.Success)
             {
@@ -148,7 +184,29 @@ namespace StudentAttendanceSystem.WebAPI.Controllers
         [HttpPatch("update")]
         public IActionResult Update(LectureUpdateDto dto)
         {
-            var result = _lectureService.Update(dto);
+            var result = _lectureService.Update(new Lecture()
+            {
+                Departments = dto.DepartmentIds.Select(x => new Department()
+                {
+                    DepartmentId = x
+                }).ToList(),
+                LectureHours = dto.LectureHourIds.Select(x => new LectureHour()
+                {
+                    LectureHourId = x
+                }).ToList(),
+                Instructors = dto.InstructorIds.Select(x => new Instructor()
+                {
+                    InstructorId = x
+                }).ToList(),
+                Students = dto.StudentIds.Select(x => new Student()
+                {
+                    StudentId = x
+                }).ToList(),
+                LectureName = dto.LectureName,
+                LectureCode = dto.LectureCode,
+                LectureLanguage = dto.LectureLanguage,
+                LectureClassCode = dto.LectureClassCode,
+            });
             if (!result.Success)
             {
                 return BadRequest(result);
@@ -159,7 +217,29 @@ namespace StudentAttendanceSystem.WebAPI.Controllers
         [HttpPatch("updateAsync")]
         public async Task<IActionResult> UpdateAsync(LectureUpdateDto dto)
         {
-            var result = await _lectureService.UpdateAsync(dto);
+            var result = await _lectureService.UpdateAsync(new Lecture()
+            {
+                Departments = dto.DepartmentIds.Select(x => new Department()
+                {
+                    DepartmentId = x
+                }).ToList(),
+                LectureHours = dto.LectureHourIds.Select(x => new LectureHour()
+                {
+                    LectureHourId = x
+                }).ToList(),
+                Instructors = dto.InstructorIds.Select(x => new Instructor()
+                {
+                    InstructorId = x
+                }).ToList(),
+                Students = dto.StudentIds.Select(x => new Student()
+                {
+                    StudentId = x
+                }).ToList(),
+                LectureName = dto.LectureName,
+                LectureCode = dto.LectureCode,
+                LectureLanguage = dto.LectureLanguage,
+                LectureClassCode = dto.LectureClassCode,
+            });
             if (!result.Success)
             {
                 return BadRequest(result);

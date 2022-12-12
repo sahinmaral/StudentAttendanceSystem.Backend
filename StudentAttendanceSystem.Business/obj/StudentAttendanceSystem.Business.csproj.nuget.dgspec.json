@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\sahin\\Desktop\\StudentAttendanceSystem\\backend\\StudentAttendanceSystem\\StudentAttendanceSystem.Business\\StudentAttendanceSystem.Business.csproj": {}
+    "C:\\Users\\sahin\\Desktop\\StudentAttendanceSystem.Backend\\StudentAttendanceSystem.Business\\StudentAttendanceSystem.Business.csproj": {}
   },
   "projects": {
-    "C:\\Users\\sahin\\Desktop\\StudentAttendanceSystem\\backend\\StudentAttendanceSystem\\StudentAttendanceSystem.Business\\StudentAttendanceSystem.Business.csproj": {
+    "C:\\Users\\sahin\\Desktop\\StudentAttendanceSystem.Backend\\StudentAttendanceSystem.Business\\StudentAttendanceSystem.Business.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\sahin\\Desktop\\StudentAttendanceSystem\\backend\\StudentAttendanceSystem\\StudentAttendanceSystem.Business\\StudentAttendanceSystem.Business.csproj",
+        "projectUniqueName": "C:\\Users\\sahin\\Desktop\\StudentAttendanceSystem.Backend\\StudentAttendanceSystem.Business\\StudentAttendanceSystem.Business.csproj",
         "projectName": "StudentAttendanceSystem.Business",
-        "projectPath": "C:\\Users\\sahin\\Desktop\\StudentAttendanceSystem\\backend\\StudentAttendanceSystem\\StudentAttendanceSystem.Business\\StudentAttendanceSystem.Business.csproj",
+        "projectPath": "C:\\Users\\sahin\\Desktop\\StudentAttendanceSystem.Backend\\StudentAttendanceSystem.Business\\StudentAttendanceSystem.Business.csproj",
         "packagesPath": "C:\\Users\\sahin\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\sahin\\Desktop\\StudentAttendanceSystem\\backend\\StudentAttendanceSystem\\StudentAttendanceSystem.Business\\obj\\",
+        "outputPath": "C:\\Users\\sahin\\Desktop\\StudentAttendanceSystem.Backend\\StudentAttendanceSystem.Business\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -33,11 +33,11 @@
           "net6.0": {
             "targetAlias": "net6.0",
             "projectReferences": {
-              "C:\\Users\\sahin\\Desktop\\StudentAttendanceSystem\\backend\\StudentAttendanceSystem\\StudentAttendanceSystem.DataAccess\\StudentAttendanceSystem.DataAccess.csproj": {
-                "projectPath": "C:\\Users\\sahin\\Desktop\\StudentAttendanceSystem\\backend\\StudentAttendanceSystem\\StudentAttendanceSystem.DataAccess\\StudentAttendanceSystem.DataAccess.csproj"
+              "C:\\Users\\sahin\\Desktop\\StudentAttendanceSystem.Backend\\StudentAttendanceSystem.DataAccess\\StudentAttendanceSystem.DataAccess.csproj": {
+                "projectPath": "C:\\Users\\sahin\\Desktop\\StudentAttendanceSystem.Backend\\StudentAttendanceSystem.DataAccess\\StudentAttendanceSystem.DataAccess.csproj"
               },
-              "C:\\Users\\sahin\\Desktop\\StudentAttendanceSystem\\backend\\StudentAttendanceSystem\\StudentAttendanceSystem.Entities\\StudentAttendanceSystem.Entities.csproj": {
-                "projectPath": "C:\\Users\\sahin\\Desktop\\StudentAttendanceSystem\\backend\\StudentAttendanceSystem\\StudentAttendanceSystem.Entities\\StudentAttendanceSystem.Entities.csproj"
+              "C:\\Users\\sahin\\Desktop\\StudentAttendanceSystem.Backend\\StudentAttendanceSystem.Entities\\StudentAttendanceSystem.Entities.csproj": {
+                "projectPath": "C:\\Users\\sahin\\Desktop\\StudentAttendanceSystem.Backend\\StudentAttendanceSystem.Entities\\StudentAttendanceSystem.Entities.csproj"
               }
             }
           }
@@ -71,14 +71,14 @@
         }
       }
     },
-    "C:\\Users\\sahin\\Desktop\\StudentAttendanceSystem\\backend\\StudentAttendanceSystem\\StudentAttendanceSystem.Core\\StudentAttendanceSystem.Core.csproj": {
+    "C:\\Users\\sahin\\Desktop\\StudentAttendanceSystem.Backend\\StudentAttendanceSystem.Core\\StudentAttendanceSystem.Core.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\sahin\\Desktop\\StudentAttendanceSystem\\backend\\StudentAttendanceSystem\\StudentAttendanceSystem.Core\\StudentAttendanceSystem.Core.csproj",
+        "projectUniqueName": "C:\\Users\\sahin\\Desktop\\StudentAttendanceSystem.Backend\\StudentAttendanceSystem.Core\\StudentAttendanceSystem.Core.csproj",
         "projectName": "StudentAttendanceSystem.Core",
-        "projectPath": "C:\\Users\\sahin\\Desktop\\StudentAttendanceSystem\\backend\\StudentAttendanceSystem\\StudentAttendanceSystem.Core\\StudentAttendanceSystem.Core.csproj",
+        "projectPath": "C:\\Users\\sahin\\Desktop\\StudentAttendanceSystem.Backend\\StudentAttendanceSystem.Core\\StudentAttendanceSystem.Core.csproj",
         "packagesPath": "C:\\Users\\sahin\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\sahin\\Desktop\\StudentAttendanceSystem\\backend\\StudentAttendanceSystem\\StudentAttendanceSystem.Core\\obj\\",
+        "outputPath": "C:\\Users\\sahin\\Desktop\\StudentAttendanceSystem.Backend\\StudentAttendanceSystem.Core\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -112,9 +112,29 @@
         "net6.0": {
           "targetAlias": "net6.0",
           "dependencies": {
+            "Autofac.Extensions.DependencyInjection": {
+              "target": "Package",
+              "version": "[8.0.0, )"
+            },
+            "Autofac.Extras.DynamicProxy": {
+              "target": "Package",
+              "version": "[6.0.1, )"
+            },
             "Microsoft.EntityFrameworkCore": {
               "target": "Package",
               "version": "[6.0.0, )"
+            },
+            "Microsoft.Extensions.Caching.Memory": {
+              "target": "Package",
+              "version": "[6.0.0, )"
+            },
+            "Microsoft.Extensions.Caching.StackExchangeRedis": {
+              "target": "Package",
+              "version": "[6.0.0, )"
+            },
+            "Newtonsoft.Json": {
+              "target": "Package",
+              "version": "[13.0.2, )"
             }
           },
           "imports": [
@@ -137,14 +157,14 @@
         }
       }
     },
-    "C:\\Users\\sahin\\Desktop\\StudentAttendanceSystem\\backend\\StudentAttendanceSystem\\StudentAttendanceSystem.DataAccess\\StudentAttendanceSystem.DataAccess.csproj": {
+    "C:\\Users\\sahin\\Desktop\\StudentAttendanceSystem.Backend\\StudentAttendanceSystem.DataAccess\\StudentAttendanceSystem.DataAccess.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\sahin\\Desktop\\StudentAttendanceSystem\\backend\\StudentAttendanceSystem\\StudentAttendanceSystem.DataAccess\\StudentAttendanceSystem.DataAccess.csproj",
+        "projectUniqueName": "C:\\Users\\sahin\\Desktop\\StudentAttendanceSystem.Backend\\StudentAttendanceSystem.DataAccess\\StudentAttendanceSystem.DataAccess.csproj",
         "projectName": "StudentAttendanceSystem.DataAccess",
-        "projectPath": "C:\\Users\\sahin\\Desktop\\StudentAttendanceSystem\\backend\\StudentAttendanceSystem\\StudentAttendanceSystem.DataAccess\\StudentAttendanceSystem.DataAccess.csproj",
+        "projectPath": "C:\\Users\\sahin\\Desktop\\StudentAttendanceSystem.Backend\\StudentAttendanceSystem.DataAccess\\StudentAttendanceSystem.DataAccess.csproj",
         "packagesPath": "C:\\Users\\sahin\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\sahin\\Desktop\\StudentAttendanceSystem\\backend\\StudentAttendanceSystem\\StudentAttendanceSystem.DataAccess\\obj\\",
+        "outputPath": "C:\\Users\\sahin\\Desktop\\StudentAttendanceSystem.Backend\\StudentAttendanceSystem.DataAccess\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -166,11 +186,11 @@
           "net6.0": {
             "targetAlias": "net6.0",
             "projectReferences": {
-              "C:\\Users\\sahin\\Desktop\\StudentAttendanceSystem\\backend\\StudentAttendanceSystem\\StudentAttendanceSystem.Core\\StudentAttendanceSystem.Core.csproj": {
-                "projectPath": "C:\\Users\\sahin\\Desktop\\StudentAttendanceSystem\\backend\\StudentAttendanceSystem\\StudentAttendanceSystem.Core\\StudentAttendanceSystem.Core.csproj"
+              "C:\\Users\\sahin\\Desktop\\StudentAttendanceSystem.Backend\\StudentAttendanceSystem.Core\\StudentAttendanceSystem.Core.csproj": {
+                "projectPath": "C:\\Users\\sahin\\Desktop\\StudentAttendanceSystem.Backend\\StudentAttendanceSystem.Core\\StudentAttendanceSystem.Core.csproj"
               },
-              "C:\\Users\\sahin\\Desktop\\StudentAttendanceSystem\\backend\\StudentAttendanceSystem\\StudentAttendanceSystem.Entities\\StudentAttendanceSystem.Entities.csproj": {
-                "projectPath": "C:\\Users\\sahin\\Desktop\\StudentAttendanceSystem\\backend\\StudentAttendanceSystem\\StudentAttendanceSystem.Entities\\StudentAttendanceSystem.Entities.csproj"
+              "C:\\Users\\sahin\\Desktop\\StudentAttendanceSystem.Backend\\StudentAttendanceSystem.Entities\\StudentAttendanceSystem.Entities.csproj": {
+                "projectPath": "C:\\Users\\sahin\\Desktop\\StudentAttendanceSystem.Backend\\StudentAttendanceSystem.Entities\\StudentAttendanceSystem.Entities.csproj"
               }
             }
           }
@@ -220,14 +240,14 @@
         }
       }
     },
-    "C:\\Users\\sahin\\Desktop\\StudentAttendanceSystem\\backend\\StudentAttendanceSystem\\StudentAttendanceSystem.Entities\\StudentAttendanceSystem.Entities.csproj": {
+    "C:\\Users\\sahin\\Desktop\\StudentAttendanceSystem.Backend\\StudentAttendanceSystem.Entities\\StudentAttendanceSystem.Entities.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\sahin\\Desktop\\StudentAttendanceSystem\\backend\\StudentAttendanceSystem\\StudentAttendanceSystem.Entities\\StudentAttendanceSystem.Entities.csproj",
+        "projectUniqueName": "C:\\Users\\sahin\\Desktop\\StudentAttendanceSystem.Backend\\StudentAttendanceSystem.Entities\\StudentAttendanceSystem.Entities.csproj",
         "projectName": "StudentAttendanceSystem.Entities",
-        "projectPath": "C:\\Users\\sahin\\Desktop\\StudentAttendanceSystem\\backend\\StudentAttendanceSystem\\StudentAttendanceSystem.Entities\\StudentAttendanceSystem.Entities.csproj",
+        "projectPath": "C:\\Users\\sahin\\Desktop\\StudentAttendanceSystem.Backend\\StudentAttendanceSystem.Entities\\StudentAttendanceSystem.Entities.csproj",
         "packagesPath": "C:\\Users\\sahin\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\sahin\\Desktop\\StudentAttendanceSystem\\backend\\StudentAttendanceSystem\\StudentAttendanceSystem.Entities\\obj\\",
+        "outputPath": "C:\\Users\\sahin\\Desktop\\StudentAttendanceSystem.Backend\\StudentAttendanceSystem.Entities\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -249,8 +269,8 @@
           "net6.0": {
             "targetAlias": "net6.0",
             "projectReferences": {
-              "C:\\Users\\sahin\\Desktop\\StudentAttendanceSystem\\backend\\StudentAttendanceSystem\\StudentAttendanceSystem.Core\\StudentAttendanceSystem.Core.csproj": {
-                "projectPath": "C:\\Users\\sahin\\Desktop\\StudentAttendanceSystem\\backend\\StudentAttendanceSystem\\StudentAttendanceSystem.Core\\StudentAttendanceSystem.Core.csproj"
+              "C:\\Users\\sahin\\Desktop\\StudentAttendanceSystem.Backend\\StudentAttendanceSystem.Core\\StudentAttendanceSystem.Core.csproj": {
+                "projectPath": "C:\\Users\\sahin\\Desktop\\StudentAttendanceSystem.Backend\\StudentAttendanceSystem.Core\\StudentAttendanceSystem.Core.csproj"
               }
             }
           }

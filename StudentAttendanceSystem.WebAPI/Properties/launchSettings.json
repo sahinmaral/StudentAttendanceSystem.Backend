@@ -14,9 +14,9 @@
       "dotnetRunMessages": true,
       "launchBrowser": true,
       "launchUrl": "swagger",
-      //"applicationUrl": "http://localhost:7106;http://localhost:5130",
+      "applicationUrl": "http://localhost:7106;http://localhost:5130",
       // Home WIFI
-      "applicationUrl": "http://localhost:7106;http://localhost:5130;http://192.168.1.103:7106;http://192.168.1.103:5130",
+      //"applicationUrl": "http://localhost:7106;http://localhost:5130;http://192.168.1.103:7106;http://192.168.1.103:5130",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }

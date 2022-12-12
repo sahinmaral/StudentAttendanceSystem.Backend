@@ -1,7 +1,5 @@
 ﻿using StudentAttendanceSystem.Core.Entities.Abstract;
 using StudentAttendanceSystem.Core.Utilities.Results;
-using StudentAttendanceSystem.Entities.Concrete;
-using StudentAttendanceSystem.Entities.DTOs;
 
 using System.Linq.Expressions;
 
@@ -19,5 +17,9 @@ namespace StudentAttendanceSystem.Business.Abstract
         Task<IDataResult<T>> GetByIdAsync(Guid id);
         IResult Delete(Guid id);
         Task<IResult> DeleteAsync(Guid id);
+        IResult Add(T entity);
+        Task<IResult> AddAsync(T entity);
+        IResult Update(T entity);
+        Task<IResult> UpdateAsync(T entity);
     }
 }

@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\sahin\\Desktop\\StudentAttendanceSystem\\backend\\StudentAttendanceSystem\\StudentAttendanceSystem.Core\\StudentAttendanceSystem.Core.csproj": {}
+    "C:\\Users\\sahin\\Desktop\\StudentAttendanceSystem.Backend\\StudentAttendanceSystem.Core\\StudentAttendanceSystem.Core.csproj": {}
   },
   "projects": {
-    "C:\\Users\\sahin\\Desktop\\StudentAttendanceSystem\\backend\\StudentAttendanceSystem\\StudentAttendanceSystem.Core\\StudentAttendanceSystem.Core.csproj": {
+    "C:\\Users\\sahin\\Desktop\\StudentAttendanceSystem.Backend\\StudentAttendanceSystem.Core\\StudentAttendanceSystem.Core.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\sahin\\Desktop\\StudentAttendanceSystem\\backend\\StudentAttendanceSystem\\StudentAttendanceSystem.Core\\StudentAttendanceSystem.Core.csproj",
+        "projectUniqueName": "C:\\Users\\sahin\\Desktop\\StudentAttendanceSystem.Backend\\StudentAttendanceSystem.Core\\StudentAttendanceSystem.Core.csproj",
         "projectName": "StudentAttendanceSystem.Core",
-        "projectPath": "C:\\Users\\sahin\\Desktop\\StudentAttendanceSystem\\backend\\StudentAttendanceSystem\\StudentAttendanceSystem.Core\\StudentAttendanceSystem.Core.csproj",
+        "projectPath": "C:\\Users\\sahin\\Desktop\\StudentAttendanceSystem.Backend\\StudentAttendanceSystem.Core\\StudentAttendanceSystem.Core.csproj",
         "packagesPath": "C:\\Users\\sahin\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\sahin\\Desktop\\StudentAttendanceSystem\\backend\\StudentAttendanceSystem\\StudentAttendanceSystem.Core\\obj\\",
+        "outputPath": "C:\\Users\\sahin\\Desktop\\StudentAttendanceSystem.Backend\\StudentAttendanceSystem.Core\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -45,9 +45,29 @@
         "net6.0": {
           "targetAlias": "net6.0",
           "dependencies": {
+            "Autofac.Extensions.DependencyInjection": {
+              "target": "Package",
+              "version": "[8.0.0, )"
+            },
+            "Autofac.Extras.DynamicProxy": {
+              "target": "Package",
+              "version": "[6.0.1, )"
+            },
             "Microsoft.EntityFrameworkCore": {
               "target": "Package",
               "version": "[6.0.0, )"
+            },
+            "Microsoft.Extensions.Caching.Memory": {
+              "target": "Package",
+              "version": "[6.0.0, )"
+            },
+            "Microsoft.Extensions.Caching.StackExchangeRedis": {
+              "target": "Package",
+              "version": "[6.0.0, )"
+            },
+            "Newtonsoft.Json": {
+              "target": "Package",
+              "version": "[13.0.2, )"
             }
           },
           "imports": [

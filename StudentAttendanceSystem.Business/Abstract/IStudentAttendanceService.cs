@@ -8,7 +8,7 @@ namespace StudentAttendanceSystem.Business.Abstract
     {
         IResult AddByStudent(StudentAttendanceAddByStudentDto dto);
         Task<IResult> AddByStudentAsync(StudentAttendanceAddByStudentDto dto);
-        //IResult Update(StudentAttendanceUpdateDto dto);
-        //Task<IResult> UpdateAsync(StudentAttendanceUpdateDto dto);
+        IResult AddByInstructor(StudentAttendanceAddByInstructorDto dto);
+        Task<IResult> AddByInstructorAsync(StudentAttendanceAddByInstructorDto dto);
     }
 }

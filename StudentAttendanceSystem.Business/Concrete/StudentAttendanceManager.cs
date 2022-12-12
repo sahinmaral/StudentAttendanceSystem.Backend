@@ -4,6 +4,7 @@ using StudentAttendanceSystem.Core.Utilities.Results;
 using StudentAttendanceSystem.DataAccess.Abstract;
 using StudentAttendanceSystem.Entities.Concrete;
 using StudentAttendanceSystem.Entities.DTOs;
+using StudentAttendanceSystem.Entities.Enums;
 
 using System.Linq.Expressions;
 
@@ -12,32 +13,32 @@ namespace StudentAttendanceSystem.Business.Concrete
     public class StudentAttendanceManager : IStudentAttendanceService
     {
         private readonly IStudentAttendanceDal _studentAttendanceDal;
-        private readonly IStudentDal _studentDal;
-        private readonly ILectureDal _lectureDal;
-        private readonly IStudentSchoolCardDal _studentSchoolCardDal;
-        public StudentAttendanceManager(IStudentAttendanceDal studentAttendanceDal, IStudentDal studentDal, ILectureDal lectureDal, IStudentSchoolCardDal studentSchoolCardDal)
+        private readonly ILectureService _lectureService;
+        private readonly IStudentSchoolCardService _studentSchoolCardService;
+        private readonly IStudentService _studentService;
+        public StudentAttendanceManager(IStudentAttendanceDal studentAttendanceDal, IStudentSchoolCardService studentSchoolCardService, ILectureService lectureService, IStudentService studentService)
         {
             _studentAttendanceDal = studentAttendanceDal;
-            _studentDal = studentDal;
-            _lectureDal = lectureDal;
-            _studentSchoolCardDal = studentSchoolCardDal;
+            _studentSchoolCardService = studentSchoolCardService;
+            _lectureService = lectureService;
+            _studentService = studentService;
         }
         public IResult AddByStudent(StudentAttendanceAddByStudentDto dto)
         {
-            IResult result = BusinessRules.Run(CheckIfStudentCardIsValid(dto.StudentCardUID), CheckIfStudentAlreadyPresent(dto.StudentCardUID));
+            IResult result = BusinessRules.Run(CheckIfStudentCardIsValid(dto.StudentCardUID), CheckIfStudentAlreadyPresentByCardUID(dto.StudentCardUID));
             if (result != null) return result;
 
-            Student student = _studentDal.GetByDetail().Single(x => x.StudentSchoolCard.StudentSchoolCardPhysicalUID == dto.StudentCardUID);
+            Student student = _studentService.GetSingle(x => x.StudentSchoolCard.StudentSchoolCardPhysicalUID == dto.StudentCardUID).Data;
 
-            DayOfWeek currentDayOfWeek = DateTime.Now.DayOfWeek;
+            DayOfWeek currentDayOfWeek = dto.StudentAttendanceLectureEnteredDateTime.DayOfWeek;
             IEnumerable<Lecture> lectures = student.Lectures.Where(x => (int)x.LectureDay == (int)currentDayOfWeek);
 
-            TimeSpan currentTimeSpan = DateTime.Now.TimeOfDay;
+            TimeSpan currentTimeSpan = dto.StudentAttendanceLectureEnteredDateTime.TimeOfDay;
 
             bool isLectureFound = false;
             Lecture currentLecture = null;
 
-            foreach (var lecture in lectures)
+            foreach (Lecture lecture in lectures)
             {
                 if (isLectureFound) break;
 
@@ -70,7 +71,8 @@ namespace StudentAttendanceSystem.Business.Concrete
             {
                 Lecture = currentLecture,
                 Student = student,
-                StudentAttendanceLectureEnteredDateTime = DateTime.Now,
+                StudentAttendanceEnteredDateTime = DateTime.Now,
+                StudentAttendanceType = StudentAttendanceType.Present
             };
 
             _studentAttendanceDal.Add(studentAttendance);
@@ -80,31 +82,41 @@ namespace StudentAttendanceSystem.Business.Concrete
 
         public async Task<IResult> AddByStudentAsync(StudentAttendanceAddByStudentDto dto)
         {
-            var result = BusinessRules.Run(CheckIfStudentCardIsValid(dto.StudentCardUID),CheckIfStudentAlreadyPresent(dto.StudentCardUID));
+            IResult result = BusinessRules.Run(CheckIfStudentCardIsValid(dto.StudentCardUID), CheckIfStudentAlreadyPresentByCardUID(dto.StudentCardUID));
             if (result != null) return result;
 
-            var students = await _studentDal.GetByDetailAsync();
-            Student student = students.Single(x => x.StudentSchoolCard.StudentSchoolCardId == new Guid(dto.StudentCardUID));
+            Student student = _studentService.GetWhere(x => x.StudentSchoolCard.StudentSchoolCardPhysicalUID == dto.StudentCardUID).Data.First(); ;
 
             DayOfWeek currentDayOfWeek = DateTime.Now.DayOfWeek;
-            var lectures = student.Lectures.Where(x => (int)x.LectureDay == (int)currentDayOfWeek);
+            IEnumerable<Lecture> lectures = student.Lectures.Where(x => (int)x.LectureDay == (int)currentDayOfWeek);
 
             TimeSpan currentTimeSpan = DateTime.Now.TimeOfDay;
 
             bool isLectureFound = false;
             Lecture currentLecture = null;
 
-            foreach (var lecture in lectures)
+            foreach (Lecture lecture in lectures)
             {
                 if (isLectureFound) break;
 
-                foreach (var lectureHour in lecture.LectureHours)
+                foreach (LectureHour lectureHour in lecture.LectureHours)
                 {
-                    if (currentTimeSpan > lectureHour.LectureHourStartHour && currentTimeSpan < lectureHour.LectureHourEndHour)
+                    if (currentTimeSpan > lectureHour.LectureHourStartHour)
                     {
-                        isLectureFound = true;
-                        currentLecture = lecture;
-                        break;
+                        TimeSpan compareLectureEndHour = new TimeSpan();
+
+                        if (lectureHour.LectureHourEndHour == new TimeSpan(0, 0, 0))
+                            compareLectureEndHour = new TimeSpan(23, 59, 59);
+                        else
+                            compareLectureEndHour = lectureHour.LectureHourEndHour;
+
+                        if (currentTimeSpan < compareLectureEndHour)
+                        {
+                            isLectureFound = true;
+                            currentLecture = lecture;
+                            break;
+                        }
+
                     }
                 }
             }
@@ -116,7 +128,7 @@ namespace StudentAttendanceSystem.Business.Concrete
             {
                 Lecture = currentLecture,
                 Student = student,
-                StudentAttendanceLectureEnteredDateTime = DateTime.Now,
+                StudentAttendanceEnteredDateTime = DateTime.Now,
             };
 
             await _studentAttendanceDal.AddAsync(studentAttendance);
@@ -124,27 +136,30 @@ namespace StudentAttendanceSystem.Business.Concrete
             return new SuccessResult("Derste var olarak kaydedildiniz");
         }
 
-        private IResult CheckIfStudentAlreadyPresent(string studentCardUID)
+        public IResult AddByInstructor(StudentAttendanceAddByInstructorDto dto)
         {
-            var card = _studentSchoolCardDal.GetSingle(x => x.StudentSchoolCardPhysicalUID == studentCardUID);
-            var student = _studentDal.GetByDetail().Single(x => x.StudentSchoolCard.StudentSchoolCardPhysicalUID == studentCardUID);
+            IResult result = BusinessRules.Run(
+                CheckIfStudentExisted(dto.StudentId),
+                CheckIfStudentAlreadyPresentByStudentId(dto.StudentId),
+                CheckIfLectureExisted(dto.LectureId));
+            if (result != null) return result;
 
-            var result = _studentAttendanceDal
-                    .GetByDetail()
-                    .Where(x => x.Student.StudentId == student.StudentId &&
-                    Math.Abs(DateTime.Now.TimeOfDay.Hours - x.StudentAttendanceLectureEnteredDateTime.Value.Hour) > 24);
+            StudentAttendance studentAttendance = new StudentAttendance()
+            {
+                StudentAttendanceEnteredDateTime = dto.StudentAttendanceEnteredDateTime,
+                Student = _studentService.GetById(dto.StudentId).Data,
+                Lecture = _lectureService.GetById(dto.LectureId).Data,
+            };
+            
+            
 
-            if (result.Any()) return new ErrorResult("Zaten suanki ders icin kartinizi okutmussunuz");
-            return new SuccessResult();
+            return new SuccessResult("Secilen ogrenci var olarak kaydedildi");
         }
 
-        private IResult CheckIfStudentCardIsValid(string studentCardUID)
+        public Task<IResult> AddByInstructorAsync(StudentAttendanceAddByInstructorDto dto)
         {
-            var card = _studentSchoolCardDal.GetSingle(x => x.StudentSchoolCardPhysicalUID == studentCardUID);
-            if (card == null) return new ErrorResult("Okutulan kart gecersizdir");
-            return new SuccessResult();
+            throw new NotImplementedException();
         }
-
         public IResult Delete(Guid id)
         {
             var result = BusinessRules.Run(CheckIfStudentAttendanceExisted(id));
@@ -157,13 +172,6 @@ namespace StudentAttendanceSystem.Business.Concrete
             });
 
             return new SuccessResult("Ogrencinin secilen yoklama saati silindi");
-        }
-
-        private IResult CheckIfStudentAttendanceExisted(Guid id)
-        {
-            var studentAttendance = _studentAttendanceDal.GetById(id);
-            if (studentAttendance == null) return new ErrorResult("Boyle bir yoklama saati yok");
-            return new SuccessResult();
         }
 
         public async Task<IResult> DeleteAsync(Guid id)
@@ -240,29 +248,88 @@ namespace StudentAttendanceSystem.Business.Concrete
             return new SuccessDataResult<List<StudentAttendance>>(await _studentAttendanceDal.GetWhereAsync(predicate));
         }
 
-        private IResult CheckIfStudentIsExisted(Guid studentId)
+        public IDataResult<StudentAttendance> GetById(Guid id)
         {
-            var student = _studentDal.GetById(studentId);
+            return new SuccessDataResult<StudentAttendance>(_studentAttendanceDal.GetById(id));
+        }
+
+        public async Task<IDataResult<StudentAttendance>> GetByIdAsync(Guid id)
+        {
+            return new SuccessDataResult<StudentAttendance>(await _studentAttendanceDal.GetByIdAsync(id));
+        }
+
+        private IResult CheckIfStudentAlreadyPresentByCardUID(string studentCardUID)
+        {
+            var card = _studentSchoolCardService.GetSingle(x => x.StudentSchoolCardPhysicalUID == studentCardUID).Data;
+            var student = _studentService.GetWhere(x => x.StudentSchoolCard.StudentSchoolCardPhysicalUID == studentCardUID).Data.First();
+
+            var result = _studentAttendanceDal
+                    .GetByDetail()
+                    .Where(x => x.Student.StudentId == student.StudentId &&
+                    DateTime.Now.TimeOfDay.Days - x.StudentAttendanceEnteredDateTime.Day == 0);
+
+            if (result.Any()) return new ErrorResult("Zaten suanki ders icin kartinizi okutmussunuz");
+            return new SuccessResult();
+        }
+
+        private IResult CheckIfStudentAlreadyPresentByStudentId(Guid studentId)
+        {
+            Student student = _studentService.GetById(studentId).Data;
+
+            var result = GetWhere
+                    (x => x.Student.StudentId == student.StudentId &&
+                    DateTime.Now.TimeOfDay.Hours - x.StudentAttendanceEnteredDateTime.Day == 0).Data;
+
+            if (result.Any()) return new ErrorResult("Secilen ogrenci zaten belirtilen tarihte var yazilmistir");
+            return new SuccessResult();
+        }
+
+        private IResult CheckIfStudentCardIsValid(string studentCardUID)
+        {
+            var card = _studentSchoolCardService.GetSingle(x => x.StudentSchoolCardPhysicalUID == studentCardUID);
+            if (card == null) return new ErrorResult("Okutulan kart gecersizdir");
+            return new SuccessResult();
+        }
+
+        private IResult CheckIfStudentAttendanceExisted(Guid id)
+        {
+            var studentAttendance = GetById(id);
+            if (studentAttendance == null) return new ErrorResult("Boyle bir yoklama saati yok");
+            return new SuccessResult();
+        }
+
+        private IResult CheckIfStudentExisted(Guid id)
+        {
+            Student student = _studentService.GetById(id).Data;
             if (student == null) return new ErrorResult("Boyle bir ogrenci yok");
             return new SuccessResult();
         }
 
-        private IResult CheckIfLectureIsExisted(Guid studentId)
+        private IResult CheckIfLectureExisted(Guid id)
         {
-            var lecture = _lectureDal.GetById(studentId);
+            Lecture lecture = _lectureService.GetById(id).Data;
             if (lecture == null) return new ErrorResult("Boyle bir ders yok");
             return new SuccessResult();
         }
 
-        public IDataResult<StudentAttendance> GetById(Guid id)
+        public IResult Add(StudentAttendance entity)
         {
             throw new NotImplementedException();
         }
 
-        public Task<IDataResult<StudentAttendance>> GetByIdAsync(Guid id)
+        public Task<IResult> AddAsync(StudentAttendance entity)
         {
             throw new NotImplementedException();
         }
 
+        public IResult Update(StudentAttendance entity)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<IResult> UpdateAsync(StudentAttendance entity)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -13,9 +13,9 @@ namespace StudentAttendanceSystem.Entities.DTOs
         public string LectureCode { get; set; }
         public string LectureLanguage { get; set; }
         public string LectureClassCode { get; set; }
-        public List<string> LectureHourIds { get; set; }
-        public List<string> DepartmentIds { get; set; }
-        public List<string> InstructorIds { get; set; }
-        public List<string> StudentIds { get; set; }
+        public List<Guid> LectureHourIds { get; set; }
+        public List<Guid> DepartmentIds { get; set; }
+        public List<Guid> InstructorIds { get; set; }
+        public List<Guid> StudentIds { get; set; }
     }
 }

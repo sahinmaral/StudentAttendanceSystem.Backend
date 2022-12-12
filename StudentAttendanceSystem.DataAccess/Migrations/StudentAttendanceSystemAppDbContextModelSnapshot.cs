@@ -34,7 +34,7 @@ namespace StudentAttendanceSystem.DataAccess.Migrations
 
                     b.HasIndex("LecturesLectureId");
 
-                    b.ToTable("DepartmentLecture");
+                    b.ToTable("DepartmentLecture", (string)null);
                 });
 
             modelBuilder.Entity("InstructorLecture", b =>
@@ -49,7 +49,7 @@ namespace StudentAttendanceSystem.DataAccess.Migrations
 
                     b.HasIndex("LecturesLectureId");
 
-                    b.ToTable("InstructorLecture");
+                    b.ToTable("InstructorLecture", (string)null);
                 });
 
             modelBuilder.Entity("LectureLectureHour", b =>
@@ -64,7 +64,7 @@ namespace StudentAttendanceSystem.DataAccess.Migrations
 
                     b.HasIndex("LecturesLectureId");
 
-                    b.ToTable("LectureLectureHour");
+                    b.ToTable("LectureLectureHour", (string)null);
                 });
 
             modelBuilder.Entity("LectureStudent", b =>
@@ -79,7 +79,7 @@ namespace StudentAttendanceSystem.DataAccess.Migrations
 
                     b.HasIndex("StudentsStudentId");
 
-                    b.ToTable("LectureStudent");
+                    b.ToTable("LectureStudent", (string)null);
                 });
 
             modelBuilder.Entity("StudentAttendanceSystem.Entities.Concrete.Department", b =>
@@ -99,7 +99,7 @@ namespace StudentAttendanceSystem.DataAccess.Migrations
 
                     b.HasIndex("FacultyId");
 
-                    b.ToTable("Departments");
+                    b.ToTable("Departments", (string)null);
                 });
 
             modelBuilder.Entity("StudentAttendanceSystem.Entities.Concrete.Faculty", b =>
@@ -114,7 +114,7 @@ namespace StudentAttendanceSystem.DataAccess.Migrations
 
                     b.HasKey("FacultyId");
 
-                    b.ToTable("Faculties");
+                    b.ToTable("Faculties", (string)null);
                 });
 
             modelBuilder.Entity("StudentAttendanceSystem.Entities.Concrete.Instructor", b =>
@@ -124,7 +124,7 @@ namespace StudentAttendanceSystem.DataAccess.Migrations
 
                     b.HasKey("InstructorId");
 
-                    b.ToTable("Instructors");
+                    b.ToTable("Instructors", (string)null);
                 });
 
             modelBuilder.Entity("StudentAttendanceSystem.Entities.Concrete.Lecture", b =>
@@ -154,7 +154,7 @@ namespace StudentAttendanceSystem.DataAccess.Migrations
 
                     b.HasKey("LectureId");
 
-                    b.ToTable("Lectures");
+                    b.ToTable("Lectures", (string)null);
                 });
 
             modelBuilder.Entity("StudentAttendanceSystem.Entities.Concrete.LectureHour", b =>
@@ -171,7 +171,7 @@ namespace StudentAttendanceSystem.DataAccess.Migrations
 
                     b.HasKey("LectureHourId");
 
-                    b.ToTable("LectureHours");
+                    b.ToTable("LectureHours", (string)null);
                 });
 
             modelBuilder.Entity("StudentAttendanceSystem.Entities.Concrete.Student", b =>
@@ -185,7 +185,7 @@ namespace StudentAttendanceSystem.DataAccess.Migrations
 
                     b.HasKey("StudentId");
 
-                    b.ToTable("Students");
+                    b.ToTable("Students", (string)null);
                 });
 
             modelBuilder.Entity("StudentAttendanceSystem.Entities.Concrete.StudentAttendance", b =>
@@ -197,8 +197,11 @@ namespace StudentAttendanceSystem.DataAccess.Migrations
                     b.Property<Guid>("LectureId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime?>("StudentAttendanceLectureEnteredDateTime")
+                    b.Property<DateTime>("StudentAttendanceEnteredDateTime")
                         .HasColumnType("datetime2");
+
+                    b.Property<int>("StudentAttendanceType")
+                        .HasColumnType("int");
 
                     b.Property<Guid>("StudentId")
                         .HasColumnType("uniqueidentifier");
@@ -209,7 +212,7 @@ namespace StudentAttendanceSystem.DataAccess.Migrations
 
                     b.HasIndex("StudentId");
 
-                    b.ToTable("StudentAttendances");
+                    b.ToTable("StudentAttendances", (string)null);
                 });
 
             modelBuilder.Entity("StudentAttendanceSystem.Entities.Concrete.StudentSchoolCard", b =>
@@ -233,7 +236,7 @@ namespace StudentAttendanceSystem.DataAccess.Migrations
                     b.HasIndex("StudentSchoolCardPhysicalUID")
                         .IsUnique();
 
-                    b.ToTable("StudentSchoolCards");
+                    b.ToTable("StudentSchoolCards", (string)null);
                 });
 
             modelBuilder.Entity("StudentAttendanceSystem.Entities.Concrete.User", b =>
@@ -256,7 +259,7 @@ namespace StudentAttendanceSystem.DataAccess.Migrations
 
                     b.HasKey("UserId");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("StudentAttendanceSystem.Entities.Concrete.UserAddress", b =>
@@ -287,7 +290,7 @@ namespace StudentAttendanceSystem.DataAccess.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserAddresses");
+                    b.ToTable("UserAddresses", (string)null);
                 });
 
             modelBuilder.Entity("DepartmentLecture", b =>

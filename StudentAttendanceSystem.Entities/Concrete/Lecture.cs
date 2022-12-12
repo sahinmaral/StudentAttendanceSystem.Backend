@@ -1,5 +1,4 @@
 ﻿using StudentAttendanceSystem.Core.Entities.Abstract;
-using StudentAttendanceSystem.Entities.Enums;
 
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -15,7 +14,7 @@ namespace StudentAttendanceSystem.Entities.Concrete
         public string LectureClassCode { get; set; }
         public List<Instructor> Instructors { get; set; }
         public List<Student> Students { get; set; }
-        public Enums.DayOfWeek LectureDay { get; set; }
+        public DayOfWeek LectureDay { get; set; }
 
         public List<LectureHour> LectureHours { get; set; }
         public List<Department> Departments { get; set; }

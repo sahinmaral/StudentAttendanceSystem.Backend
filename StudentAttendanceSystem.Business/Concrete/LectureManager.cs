@@ -1,4 +1,5 @@
 ﻿using StudentAttendanceSystem.Business.Abstract;
+using StudentAttendanceSystem.Core.Aspects.Autofac.Caching;
 using StudentAttendanceSystem.Core.Utilities.Business;
 using StudentAttendanceSystem.Core.Utilities.Results;
 using StudentAttendanceSystem.DataAccess.Abstract;
@@ -13,56 +14,44 @@ namespace StudentAttendanceSystem.Business.Concrete
     public class LectureManager : ILectureService
     {
         private readonly ILectureDal _lectureDal;
-        private readonly IDepartmentDal _departmentDal;
-        private readonly ILectureHourDal _lectureHourDal;
-        private readonly IInstructorDal _instructorDal;
-        public LectureManager(ILectureDal lectureDal, IDepartmentDal departmentDal, ILectureHourDal lectureHourDal, IInstructorDal instructorDal)
+        private readonly IDepartmentService _departmentService;
+        private readonly ILectureHourService _lectureHourService;
+        private readonly IInstructorService _instructorService;
+        public LectureManager(ILectureDal lectureDal, IDepartmentService departmentService, ILectureHourService lectureHourService, IInstructorService instructorService)
         {
             _lectureDal = lectureDal;
-            _departmentDal = departmentDal;
-            _lectureHourDal = lectureHourDal;
-            _instructorDal = instructorDal;
+            _departmentService = departmentService;
+            _lectureHourService = lectureHourService;
+            _instructorService = instructorService;
         }
-
-        public IResult Add(LectureAddDto dto)
+        public IResult CheckIfLectureExists(Guid lectureId)
         {
-            var result = BusinessRules.Run(
-                CheckIfDepartmentsAreExistedAndNotDuplicated(dto.DepartmentIds),
-                CheckIfInstructorsAreExistedAndNotDuplicated(dto.InstructorIds),
-                CheckIfLectureHoursAreExistedAndNotDuplicated(dto.LectureHourIds)
-                );
-
-            if (result != null) return result;
-
-            Lecture newLecture = new Lecture()
+            Lecture addedLecture = GetById(lectureId).Data;
+            if (addedLecture == null)
             {
-                LectureId = new Guid(),
-                LectureName = dto.LectureName,
-                LectureCode = dto.LectureCode,
-                LectureLanguage = dto.LectureLanguage,
-                LectureClassCode = dto.LectureClassCode,
-                LectureHours = dto.LectureHourIds.Select(x =>
-                {
-                    return new LectureHour() { LectureHourId = new Guid(x) };
-                }).ToList(),
-                Departments = dto.DepartmentIds.Select(x =>
-                {
-                    return new Department() { DepartmentId = new Guid(x) };
-                }).ToList(),
-                Instructors = dto.InstructorIds.Select(x =>
-                {
-                    Instructor instructor = new Instructor();
-                    instructor.InstructorId = new Guid(x);
-                    return instructor;
-                }).ToList()
-            };
+                return new ErrorResult("Yazilan ID'ye bagli bir ders yok");
+            }
 
-            _lectureDal.Add(newLecture);
-
-            return new SuccessResult("Ders basariyla eklendi");
+            return new SuccessResult();
         }
+        public IResult CheckIfLectureAlreadyAddedAtDepartments(Guid lectureId, List<Guid> departmentIds)
+        {
+            Lecture addedLecture = GetByIdDetail(lectureId).Data;
 
-        private IResult CheckIfDepartmentsAreExistedAndNotDuplicated(List<string> departmentIds)
+            foreach (var departmentId in departmentIds)
+            {
+                Department lectureAddedDepartment = _departmentService.GetById(departmentId).Data;
+
+                if (addedLecture.Departments.Contains(lectureAddedDepartment))
+                {
+                    return new ErrorResult($"{lectureAddedDepartment.DepartmentName} department uzerinde zaten ders ekli");
+                }
+            }
+
+            return new SuccessResult();
+
+        }
+        private IResult CheckIfDepartmentsAreExistedAndNotDuplicated(List<Guid> departmentIds)
         {
             if (departmentIds.Count != departmentIds.Distinct().Count())
             {
@@ -71,7 +60,7 @@ namespace StudentAttendanceSystem.Business.Concrete
 
             foreach (var departmentId in departmentIds)
             {
-                var department = _departmentDal.GetById(new Guid(departmentId));
+                var department = _departmentService.GetById(departmentId).Data;
                 if (department == null)
                 {
                     return new ErrorResult("Boyle bir department yok");
@@ -81,8 +70,7 @@ namespace StudentAttendanceSystem.Business.Concrete
             return new SuccessResult();
 
         }
-
-        private IResult CheckIfInstructorsAreExistedAndNotDuplicated(List<string> instructorIds)
+        private IResult CheckIfInstructorsAreExistedAndNotDuplicated(List<Guid> instructorIds)
         {
             if (instructorIds.Count != instructorIds.Distinct().Count())
             {
@@ -91,7 +79,7 @@ namespace StudentAttendanceSystem.Business.Concrete
 
             foreach (var instructorId in instructorIds)
             {
-                var instructor = _instructorDal.GetById(new Guid(instructorId));
+                var instructor = _instructorService.GetById(instructorId).Data;
                 if (instructor == null)
                 {
                     return new ErrorResult("Boyle bir ogretmen yok");
@@ -100,8 +88,7 @@ namespace StudentAttendanceSystem.Business.Concrete
 
             return new SuccessResult();
         }
-
-        private IResult CheckIfLectureHoursAreExistedAndNotDuplicated(List<string> lectureHourIds)
+        private IResult CheckIfLectureHoursAreExistedAndNotDuplicated(List<Guid> lectureHourIds)
         {
             if (lectureHourIds.Count != lectureHourIds.Distinct().Count())
             {
@@ -110,7 +97,7 @@ namespace StudentAttendanceSystem.Business.Concrete
 
             foreach (var lectureHourId in lectureHourIds)
             {
-                var lectureHour = _lectureHourDal.GetById(new Guid(lectureHourId));
+                var lectureHour = _lectureHourService.GetById(lectureHourId).Data;
                 if (lectureHour == null)
                 {
                     return new ErrorResult("Boyle bir ders saati yok");
@@ -119,41 +106,6 @@ namespace StudentAttendanceSystem.Business.Concrete
 
             return new SuccessResult();
         }
-
-        public async Task<IResult> AddAsync(LectureAddDto dto)
-        {
-            var result = BusinessRules.Run(CheckIfLectureNameIsNotAlreadyTaken(dto.LectureName));
-
-            if (result != null) return result;
-
-
-            Lecture newLecture = new Lecture()
-            {
-                LectureName = dto.LectureName,
-                LectureCode = dto.LectureCode,
-                LectureLanguage = dto.LectureLanguage,
-                LectureClassCode = dto.LectureClassCode,
-                LectureHours = dto.LectureHourIds.Select(x =>
-                {
-                    return new LectureHour() { LectureHourId = new Guid(x) };
-                }).ToList(),
-                Departments = dto.DepartmentIds.Select(x =>
-                {
-                    return new Department() { DepartmentId = new Guid(x) };
-                }).ToList(),
-                Instructors = dto.InstructorIds.Select(x =>
-                {
-                    Instructor instructor = new Instructor();
-                    instructor.InstructorId = new Guid(x);
-                    return instructor;
-                }).ToList()
-            };
-
-            await _lectureDal.AddAsync(newLecture);
-
-            return new SuccessResult("Ders basariyla eklendi");
-        }
-
         private IResult CheckIfLectureNameIsNotAlreadyTaken(string lectureName)
         {
             var lecture = _lectureDal.GetSingle(x => x.LectureName == lectureName);
@@ -164,6 +116,91 @@ namespace StudentAttendanceSystem.Business.Concrete
             return new SuccessResult();
         }
 
+        [CacheRemoveAspect
+            ($"{nameof(ILectureService)}{nameof(Get)}," +
+            $"{nameof(ILectureService)}{nameof(GetAsync)}" +
+            $"{nameof(ILectureService)}{nameof(GetByDetail)}" +
+            $"{nameof(ILectureService)}{nameof(GetByDetailAsync)}" +
+            $"{nameof(ILectureService)}{nameof(GetById)}" +
+            $"{nameof(ILectureService)}{nameof(GetByIdAsync)}" +
+            $"{nameof(ILectureService)}{nameof(GetWhere)}" +
+            $"{nameof(ILectureService)}{nameof(GetWhereAsync)}" +
+            $"{nameof(ILectureService)}{nameof(GetSingle)}" +
+            $"{nameof(ILectureService)}{nameof(GetSingleAsync)}")]
+        public IResult Add(Lecture lecture)
+        {
+            var result = BusinessRules.Run(
+                CheckIfDepartmentsAreExistedAndNotDuplicated(lecture.Departments.Select(x=>x.DepartmentId).ToList()),
+                CheckIfInstructorsAreExistedAndNotDuplicated(lecture.Instructors.Select(x => x.InstructorId).ToList()),
+                CheckIfLectureHoursAreExistedAndNotDuplicated(lecture.LectureHours.Select(x => x.LectureHourId).ToList())
+                );
+
+            if (result != null) return result;
+
+            Lecture newLecture = new Lecture()
+            {
+                LectureId = new Guid(),
+                LectureName = lecture.LectureName,
+                LectureCode = lecture.LectureCode,
+                LectureLanguage = lecture.LectureLanguage,
+                LectureClassCode = lecture.LectureClassCode,
+                LectureHours = lecture.LectureHours,
+                Departments = lecture.Departments,
+                Instructors = lecture.Instructors
+            };
+
+            _lectureDal.Add(newLecture);
+
+            return new SuccessResult("Ders basariyla eklendi");
+        }
+        [CacheRemoveAspect
+            ($"{nameof(ILectureService)}{nameof(Get)}," +
+            $"{nameof(ILectureService)}{nameof(GetAsync)}" +
+            $"{nameof(ILectureService)}{nameof(GetByDetail)}" +
+            $"{nameof(ILectureService)}{nameof(GetByDetailAsync)}" +
+            $"{nameof(ILectureService)}{nameof(GetById)}" +
+            $"{nameof(ILectureService)}{nameof(GetByIdAsync)}" +
+            $"{nameof(ILectureService)}{nameof(GetWhere)}" +
+            $"{nameof(ILectureService)}{nameof(GetWhereAsync)}" +
+            $"{nameof(ILectureService)}{nameof(GetSingle)}" +
+            $"{nameof(ILectureService)}{nameof(GetSingleAsync)}")]
+        public async Task<IResult> AddAsync(Lecture lecture)
+        {
+            var result = BusinessRules.Run(
+                CheckIfDepartmentsAreExistedAndNotDuplicated(lecture.Departments.Select(x => x.DepartmentId).ToList()),
+                CheckIfInstructorsAreExistedAndNotDuplicated(lecture.Instructors.Select(x => x.InstructorId).ToList()),
+                CheckIfLectureHoursAreExistedAndNotDuplicated(lecture.LectureHours.Select(x => x.LectureHourId).ToList())
+                );
+
+            if (result != null) return result;
+
+            Lecture newLecture = new Lecture()
+            {
+                LectureId = new Guid(),
+                LectureName = lecture.LectureName,
+                LectureCode = lecture.LectureCode,
+                LectureLanguage = lecture.LectureLanguage,
+                LectureClassCode = lecture.LectureClassCode,
+                LectureHours = lecture.LectureHours,
+                Departments = lecture.Departments,
+                Instructors = lecture.Instructors
+            };
+
+            await _lectureDal.AddAsync(newLecture);
+
+            return new SuccessResult("Ders basariyla eklendi");
+        }
+        [CacheRemoveAspect
+            ($"{nameof(ILectureService)}{nameof(Get)}," +
+            $"{nameof(ILectureService)}{nameof(GetAsync)}" +
+            $"{nameof(ILectureService)}{nameof(GetByDetail)}" +
+            $"{nameof(ILectureService)}{nameof(GetByDetailAsync)}" +
+            $"{nameof(ILectureService)}{nameof(GetById)}" +
+            $"{nameof(ILectureService)}{nameof(GetByIdAsync)}" +
+            $"{nameof(ILectureService)}{nameof(GetWhere)}" +
+            $"{nameof(ILectureService)}{nameof(GetWhereAsync)}" +
+            $"{nameof(ILectureService)}{nameof(GetSingle)}" +
+            $"{nameof(ILectureService)}{nameof(GetSingleAsync)}")]
         public IResult Delete(Guid id)
         {
             _lectureDal.Delete(_lectureDal.GetById(id));
@@ -171,6 +208,17 @@ namespace StudentAttendanceSystem.Business.Concrete
             return new SuccessResult("Ders basariyla silindi");
         }
 
+        [CacheRemoveAspect
+            ($"{nameof(ILectureService)}{nameof(Get)}," +
+            $"{nameof(ILectureService)}{nameof(GetAsync)}" +
+            $"{nameof(ILectureService)}{nameof(GetByDetail)}" +
+            $"{nameof(ILectureService)}{nameof(GetByDetailAsync)}" +
+            $"{nameof(ILectureService)}{nameof(GetById)}" +
+            $"{nameof(ILectureService)}{nameof(GetByIdAsync)}" +
+            $"{nameof(ILectureService)}{nameof(GetWhere)}" +
+            $"{nameof(ILectureService)}{nameof(GetWhereAsync)}" +
+            $"{nameof(ILectureService)}{nameof(GetSingle)}" +
+            $"{nameof(ILectureService)}{nameof(GetSingleAsync)}")]
         public async Task<IResult> DeleteAsync(Guid id)
         {
             await _lectureDal.DeleteAsync(await _lectureDal.GetByIdAsync(id));
@@ -178,138 +226,138 @@ namespace StudentAttendanceSystem.Business.Concrete
             return new SuccessResult("Ders basariyla silindi");
         }
 
+        [CacheAspect(10)]
         public IDataResult<List<Lecture>> Get()
         {
             return new SuccessDataResult<List<Lecture>>(_lectureDal.Get());
         }
 
+        [CacheAspect(10)]
         public async Task<IDataResult<List<Lecture>>> GetAsync()
         {
             return new SuccessDataResult<List<Lecture>>(await _lectureDal.GetAsync());
         }
 
+        [CacheAspect(10)]
         public IDataResult<List<Lecture>> GetByDetail()
         {
             return new SuccessDataResult<List<Lecture>>(_lectureDal.GetByDetail());
         }
 
+        [CacheAspect(10)]
         public async Task<IDataResult<List<Lecture>>> GetByDetailAsync()
         {
             return new SuccessDataResult<List<Lecture>>(await _lectureDal.GetByDetailAsync());
         }
 
+        [CacheAspect(10)]
         public IDataResult<Lecture> GetById(Guid id)
         {
             return new SuccessDataResult<Lecture>(_lectureDal.GetById(id));
         }
 
+        [CacheAspect(10)]
         public async Task<IDataResult<Lecture>> GetByIdAsync(Guid id)
         {
             return new SuccessDataResult<Lecture>(await _lectureDal.GetByIdAsync(id));
         }
 
+        [CacheAspect(10)]
         public IDataResult<Lecture> GetByIdDetail(Guid id)
         {
             return new SuccessDataResult<Lecture>(_lectureDal.GetByIdDetail(id));
         }
 
+        [CacheAspect(10)]
         public async Task<IDataResult<Lecture>> GetByIdDetailAsync(Guid id)
         {
             return new SuccessDataResult<Lecture>(await _lectureDal.GetByIdDetailAsync(id));
         }
 
+        [CacheAspect(10)]
         public IDataResult<Lecture> GetSingle(Expression<Func<Lecture, bool>> predicate)
         {
             return new SuccessDataResult<Lecture>(_lectureDal.GetSingle(predicate));
         }
 
+        [CacheAspect(10)]
         public async Task<IDataResult<Lecture>> GetSingleAsync(Expression<Func<Lecture, bool>> predicate)
         {
             return new SuccessDataResult<Lecture>(await _lectureDal.GetSingleAsync(predicate));
         }
 
+        [CacheAspect(10)]
         public IDataResult<List<Lecture>> GetWhere(Expression<Func<Lecture, bool>> predicate)
         {
             return new SuccessDataResult<List<Lecture>>(_lectureDal.GetWhere(predicate));
         }
 
+        [CacheAspect(10)]
         public async Task<IDataResult<List<Lecture>>> GetWhereAsync(Expression<Func<Lecture, bool>> predicate)
         {
             return new SuccessDataResult<List<Lecture>>(await _lectureDal.GetWhereAsync(predicate));
         }
 
-        public IResult Update(LectureUpdateDto dto)
+        [CacheRemoveAspect
+            ($"{nameof(ILectureService)}{nameof(Get)}," +
+            $"{nameof(ILectureService)}{nameof(GetAsync)}" +
+            $"{nameof(ILectureService)}{nameof(GetByDetail)}" +
+            $"{nameof(ILectureService)}{nameof(GetByDetailAsync)}" +
+            $"{nameof(ILectureService)}{nameof(GetById)}" +
+            $"{nameof(ILectureService)}{nameof(GetByIdAsync)}" +
+            $"{nameof(ILectureService)}{nameof(GetWhere)}" +
+            $"{nameof(ILectureService)}{nameof(GetWhereAsync)}" +
+            $"{nameof(ILectureService)}{nameof(GetSingle)}" +
+            $"{nameof(ILectureService)}{nameof(GetSingleAsync)}")]
+        public IResult Update(Lecture lecture)
         {
-            Lecture addedLecture = _lectureDal.GetById(dto.LectureId);
-            if (addedLecture == null)
-            {
-                return new ErrorResult("Yazilan ID'ye bagli bir ders yok");
-            }
+            var result = CheckIfLectureExists(lecture.LectureId);
+            if (!result.Success) return result;
 
-            addedLecture.LectureName = dto.LectureName;
-            addedLecture.LectureLanguage = dto.LectureLanguage;
-            addedLecture.LectureCode = dto.LectureCode;
+            Lecture updatedLecture = GetByIdDetail(lecture.LectureId).Data;
 
-            addedLecture.Departments = dto.DepartmentIds.Select(x =>
-            {
-                return new Department() { DepartmentId = new Guid(x) };
-            }).ToList();
+            updatedLecture.LectureName = lecture.LectureName;
+            updatedLecture.LectureLanguage = lecture.LectureLanguage;
+            updatedLecture.LectureCode = lecture.LectureCode;
+            updatedLecture.Departments = lecture.Departments;
+            updatedLecture.LectureHours = lecture.LectureHours;
+            updatedLecture.Instructors = lecture.Instructors;
+            updatedLecture.Students = lecture.Students;
 
-            addedLecture.LectureHours = dto.LectureHourIds.Select(x =>
-            {
-                return new LectureHour() { LectureHourId = new Guid(x) };
-            }).ToList();
-
-            addedLecture.Instructors = dto.InstructorIds.Select(x =>
-            {
-                return new Instructor() { InstructorId = new Guid(x) };
-            }).ToList();
-
-            addedLecture.Students = dto.StudentIds.Select(x =>
-            {
-                return new Student() { StudentId = new Guid(x) };
-            }).ToList();
-
-
-            _lectureDal.Update(addedLecture);
+            _lectureDal.Update(updatedLecture);
 
             return new SuccessResult("Ders basariyla guncellendi");
         }
 
-        public async Task<IResult> UpdateAsync(LectureUpdateDto dto)
+        [CacheRemoveAspect
+            ($"{nameof(IDepartmentService)}{nameof(Get)}," +
+            $"{nameof(IDepartmentService)}{nameof(GetAsync)}" +
+            $"{nameof(IDepartmentService)}{nameof(GetByDetail)}" +
+            $"{nameof(IDepartmentService)}{nameof(GetByDetailAsync)}" +
+            $"{nameof(IDepartmentService)}{nameof(GetById)}" +
+            $"{nameof(IDepartmentService)}{nameof(GetByIdAsync)}" +
+            $"{nameof(IDepartmentService)}{nameof(GetWhere)}" +
+            $"{nameof(IDepartmentService)}{nameof(GetWhereAsync)}" +
+            $"{nameof(IDepartmentService)}{nameof(GetSingle)}" +
+            $"{nameof(IDepartmentService)}{nameof(GetSingleAsync)}")]
+        public async Task<IResult> UpdateAsync(Lecture lecture)
         {
-            await _lectureDal.UpdateAsync(null);
+            var result = CheckIfLectureExists(lecture.LectureId);
+            if (!result.Success) return result;
+
+            Lecture updatedLecture = GetByIdDetail(lecture.LectureId).Data;
+
+            updatedLecture.LectureName = lecture.LectureName;
+            updatedLecture.LectureLanguage = lecture.LectureLanguage;
+            updatedLecture.LectureCode = lecture.LectureCode;
+            updatedLecture.Departments = lecture.Departments;
+            updatedLecture.LectureHours = lecture.LectureHours;
+            updatedLecture.Instructors = lecture.Instructors;
+            updatedLecture.Students = lecture.Students;
+
+            await _lectureDal.UpdateAsync(updatedLecture);
 
             return new SuccessResult("Ders basariyla guncellendi");
-        }
-
-        public IResult CheckIfLectureExists(Guid lectureId)
-        {
-            Lecture addedLecture = _lectureDal.GetById(lectureId);
-            if (addedLecture == null)
-            {
-                return new ErrorResult("Yazilan ID'ye bagli bir ders yok");
-            }
-
-            return new SuccessResult();
-        }
-
-        public IResult CheckIfLectureAlreadyAddedAtDepartments(Guid lectureId, List<Guid> departmentIds)
-        {
-            Lecture addedLecture = _lectureDal.GetByIdDetail(lectureId);
-
-            foreach (var departmentId in departmentIds)
-            {
-                Department lectureAddedDepartment = _departmentDal.GetById(departmentId);
-
-                if (addedLecture.Departments.Contains(lectureAddedDepartment))
-                {
-                    return new ErrorResult($"{lectureAddedDepartment.DepartmentName} department uzerinde zaten ders ekli");
-                }
-            }
-
-            return new SuccessResult();
-
         }
 
     }

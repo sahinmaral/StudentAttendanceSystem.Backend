@@ -1,11 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
-using StudentAttendanceSystem.Core.Entities.Abstract;
-using StudentAttendanceSystem.Core.Utilities.Results;
 using StudentAttendanceSystem.DataAccess.Abstract;
 using StudentAttendanceSystem.Entities.Concrete;
-using StudentAttendanceSystem.Entities.DTOs;
+
+using System.Data.Common;
 
 namespace StudentAttendanceSystem.DataAccess.Concrete.EntityFramework
 {
