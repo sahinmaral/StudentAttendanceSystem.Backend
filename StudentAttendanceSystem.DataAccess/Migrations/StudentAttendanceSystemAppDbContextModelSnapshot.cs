@@ -34,7 +34,7 @@ namespace StudentAttendanceSystem.DataAccess.Migrations
 
                     b.HasIndex("LecturesLectureId");
 
-                    b.ToTable("DepartmentLecture", (string)null);
+                    b.ToTable("DepartmentLecture");
                 });
 
             modelBuilder.Entity("InstructorLecture", b =>
@@ -49,7 +49,7 @@ namespace StudentAttendanceSystem.DataAccess.Migrations
 
                     b.HasIndex("LecturesLectureId");
 
-                    b.ToTable("InstructorLecture", (string)null);
+                    b.ToTable("InstructorLecture");
                 });
 
             modelBuilder.Entity("LectureLectureHour", b =>
@@ -64,7 +64,7 @@ namespace StudentAttendanceSystem.DataAccess.Migrations
 
                     b.HasIndex("LecturesLectureId");
 
-                    b.ToTable("LectureLectureHour", (string)null);
+                    b.ToTable("LectureLectureHour");
                 });
 
             modelBuilder.Entity("LectureStudent", b =>
@@ -79,7 +79,7 @@ namespace StudentAttendanceSystem.DataAccess.Migrations
 
                     b.HasIndex("StudentsStudentId");
 
-                    b.ToTable("LectureStudent", (string)null);
+                    b.ToTable("LectureStudent");
                 });
 
             modelBuilder.Entity("StudentAttendanceSystem.Entities.Concrete.Department", b =>
@@ -99,7 +99,7 @@ namespace StudentAttendanceSystem.DataAccess.Migrations
 
                     b.HasIndex("FacultyId");
 
-                    b.ToTable("Departments", (string)null);
+                    b.ToTable("Departments");
                 });
 
             modelBuilder.Entity("StudentAttendanceSystem.Entities.Concrete.Faculty", b =>
@@ -114,7 +114,7 @@ namespace StudentAttendanceSystem.DataAccess.Migrations
 
                     b.HasKey("FacultyId");
 
-                    b.ToTable("Faculties", (string)null);
+                    b.ToTable("Faculties");
                 });
 
             modelBuilder.Entity("StudentAttendanceSystem.Entities.Concrete.Instructor", b =>
@@ -124,7 +124,7 @@ namespace StudentAttendanceSystem.DataAccess.Migrations
 
                     b.HasKey("InstructorId");
 
-                    b.ToTable("Instructors", (string)null);
+                    b.ToTable("Instructors");
                 });
 
             modelBuilder.Entity("StudentAttendanceSystem.Entities.Concrete.Lecture", b =>
@@ -154,7 +154,7 @@ namespace StudentAttendanceSystem.DataAccess.Migrations
 
                     b.HasKey("LectureId");
 
-                    b.ToTable("Lectures", (string)null);
+                    b.ToTable("Lectures");
                 });
 
             modelBuilder.Entity("StudentAttendanceSystem.Entities.Concrete.LectureHour", b =>
@@ -171,7 +171,7 @@ namespace StudentAttendanceSystem.DataAccess.Migrations
 
                     b.HasKey("LectureHourId");
 
-                    b.ToTable("LectureHours", (string)null);
+                    b.ToTable("LectureHours");
                 });
 
             modelBuilder.Entity("StudentAttendanceSystem.Entities.Concrete.Student", b =>
@@ -185,7 +185,7 @@ namespace StudentAttendanceSystem.DataAccess.Migrations
 
                     b.HasKey("StudentId");
 
-                    b.ToTable("Students", (string)null);
+                    b.ToTable("Students");
                 });
 
             modelBuilder.Entity("StudentAttendanceSystem.Entities.Concrete.StudentAttendance", b =>
@@ -212,7 +212,7 @@ namespace StudentAttendanceSystem.DataAccess.Migrations
 
                     b.HasIndex("StudentId");
 
-                    b.ToTable("StudentAttendances", (string)null);
+                    b.ToTable("StudentAttendances");
                 });
 
             modelBuilder.Entity("StudentAttendanceSystem.Entities.Concrete.StudentSchoolCard", b =>
@@ -236,7 +236,7 @@ namespace StudentAttendanceSystem.DataAccess.Migrations
                     b.HasIndex("StudentSchoolCardPhysicalUID")
                         .IsUnique();
 
-                    b.ToTable("StudentSchoolCards", (string)null);
+                    b.ToTable("StudentSchoolCards");
                 });
 
             modelBuilder.Entity("StudentAttendanceSystem.Entities.Concrete.User", b =>
@@ -259,38 +259,7 @@ namespace StudentAttendanceSystem.DataAccess.Migrations
 
                     b.HasKey("UserId");
 
-                    b.ToTable("Users", (string)null);
-                });
-
-            modelBuilder.Entity("StudentAttendanceSystem.Entities.Concrete.UserAddress", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("UserAddressCity")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("UserAddressDistrict")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("UserAddressStreet")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<short>("UserAddressZipCode")
-                        .HasColumnType("smallint");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("UserAddresses", (string)null);
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("DepartmentLecture", b =>
@@ -416,17 +385,6 @@ namespace StudentAttendanceSystem.DataAccess.Migrations
                     b.Navigation("Student");
                 });
 
-            modelBuilder.Entity("StudentAttendanceSystem.Entities.Concrete.UserAddress", b =>
-                {
-                    b.HasOne("StudentAttendanceSystem.Entities.Concrete.User", "User")
-                        .WithMany("UserAddresses")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("StudentAttendanceSystem.Entities.Concrete.Faculty", b =>
                 {
                     b.Navigation("Departments");
@@ -445,8 +403,6 @@ namespace StudentAttendanceSystem.DataAccess.Migrations
 
                     b.Navigation("Student")
                         .IsRequired();
-
-                    b.Navigation("UserAddresses");
                 });
 #pragma warning restore 612, 618
         }

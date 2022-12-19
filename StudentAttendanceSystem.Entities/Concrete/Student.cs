@@ -6,7 +6,6 @@ namespace StudentAttendanceSystem.Entities.Concrete
 {
     public class Student:IEntity
     {
-        [ForeignKey(nameof(User))]
         public Guid StudentId { get; set; }
         public List<Lecture> Lectures { get; set; }
         public string StudentSchoolNumber { get; set; }

@@ -12,7 +12,26 @@ using System.Threading.Tasks;
 
 namespace StudentAttendanceSystem.DataAccess.Concrete.EntityFramework
 {
-    public class EfLectureHourDal:EfEntityRepositoryBase<LectureHour, StudentAttendanceSystemAppDbContext>, ILectureHourDal
+    public class EfLectureHourDal : EfEntityRepositoryBase<LectureHour, StudentAttendanceSystemAppDbContext>, ILectureHourDal
     {
+        public List<LectureHour> GetByDetail()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<List<LectureHour>> GetByDetailAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        public LectureHour GetByIdDetail(Guid id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<LectureHour> GetByIdDetailAsync(Guid id)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

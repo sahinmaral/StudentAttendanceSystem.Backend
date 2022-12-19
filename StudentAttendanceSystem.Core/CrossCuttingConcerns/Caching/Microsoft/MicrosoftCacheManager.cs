@@ -50,12 +50,14 @@ namespace StudentAttendanceSystem.Core.CrossCuttingConcerns.Caching.Microsoft
                 cacheCollectionValues.Add(cacheItemValue);
             }
 
-            var regex = new Regex(pattern, RegexOptions.Singleline | RegexOptions.Compiled | RegexOptions.IgnoreCase);
-            var keysToRemove = cacheCollectionValues.Where(d => regex.IsMatch(d.Key.ToString())).Select(d => d.Key).ToList();
+            List<Regex> regexes = cacheCollectionValues.Select(x => new Regex(x.Key.ToString())).ToList();
 
-            foreach (var key in keysToRemove)
+            Dictionary<string, Regex> cacheCollectionValuesAndRegexPairs = new Dictionary<string, Regex>();
+            cacheCollectionValues.ForEach(x => cacheCollectionValuesAndRegexPairs.Add(x.Key.ToString(),new Regex(x.Key.ToString(), RegexOptions.Singleline | RegexOptions.Compiled | RegexOptions.IgnoreCase)));
+
+            foreach (var pair in cacheCollectionValuesAndRegexPairs)
             {
-                _memoryCache.Remove(key);
+                if (pair.Value.IsMatch(pattern)) _memoryCache.Remove(pair.Key);
             }
         }
     }

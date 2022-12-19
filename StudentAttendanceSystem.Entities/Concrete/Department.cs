@@ -6,7 +6,12 @@ namespace StudentAttendanceSystem.Entities.Concrete
 {
     public class Department:IEntity
     {
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public Department()
+        {
+            DepartmentId = Guid.NewGuid();
+        }
+
+        
         public Guid DepartmentId { get; set; }
         public string DepartmentName { get; set; }
         public Faculty Faculty { get; set; }

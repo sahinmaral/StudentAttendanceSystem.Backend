@@ -25,12 +25,12 @@ namespace StudentAttendanceSystem.WebAPI.Controllers
             _lectureService = lectureService;
         }
 
-        [HttpGet("get")]
-        public IActionResult Get()
+        [HttpGet]
+        public async Task<IActionResult> GetAsync()
         {
             Stopwatch stopwatch = Stopwatch.StartNew();
 
-            var result = _lectureService.GetByDetail();
+            var result = await _lectureService.GetByDetailAsync();
 
             stopwatch.Stop();
 
@@ -44,53 +44,8 @@ namespace StudentAttendanceSystem.WebAPI.Controllers
             return Ok(result);
         }
 
-        [HttpGet("getAsync")]
-        public async Task<IActionResult> GetAsync()
-        {
-            var result = await _lectureService.GetByDetailAsync();
-
-            if (!result.Success)
-            {
-                return BadRequest(result);
-            }
-
-            return Ok(result);
-        }
-
-        [HttpPut("add")]
-        public IActionResult Add(LectureAddDto dto)
-        {
-            var result = _lectureService.Add(new Lecture()
-            {
-                Departments = dto.DepartmentIds.Select(x=> new Department()
-                {
-                    DepartmentId = x
-                }).ToList(),
-                LectureHours = dto.LectureHourIds.Select(x => new LectureHour()
-                {
-                    LectureHourId = x
-                }).ToList(),
-                Instructors = dto.InstructorIds.Select(x=> new Instructor()
-                {
-                    InstructorId = x
-                }).ToList(),
-                LectureName = dto.LectureName,
-                LectureCode = dto.LectureCode,
-                LectureLanguage = dto.LectureLanguage,
-                LectureClassCode = dto.LectureClassCode,
-            });
-
-            if (!result.Success)
-            {
-                return BadRequest(result);
-            }
-
-            return Ok(result);
-
-        }
-
-        [HttpPut("addAsync")]
-        public async Task<IActionResult> AddAsync(LectureAddDto dto)
+        [HttpPut]
+        public async Task<IActionResult> AddAsync(LectureDto dto)
         {
             var result = await _lectureService.AddAsync(new Lecture()
             {
@@ -106,10 +61,11 @@ namespace StudentAttendanceSystem.WebAPI.Controllers
                 {
                     InstructorId = x
                 }).ToList(),
-                LectureName = dto.LectureName,
-                LectureCode = dto.LectureCode,
-                LectureLanguage = dto.LectureLanguage,
-                LectureClassCode = dto.LectureClassCode,
+                LectureName = dto.Name,
+                LectureCode = dto.Code,
+                LectureLanguage = dto.Language,
+                LectureClassCode = dto.ClassCode,
+                LectureDay = dto.Day
             });
 
             if (!result.Success)
@@ -120,19 +76,7 @@ namespace StudentAttendanceSystem.WebAPI.Controllers
             return Ok(result);
         }
 
-        [HttpDelete("delete")]
-        public IActionResult Delete(Guid id)
-        {
-            var result = _lectureService.Delete(id);
-            if (!result.Success)
-            {
-                return BadRequest(result);
-            }
-
-            return Ok(result);
-        }
-
-        [HttpDelete("deleteAsync")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAsync(Guid id)
         {
             var result = await _lectureService.DeleteAsync(id);
@@ -144,20 +88,7 @@ namespace StudentAttendanceSystem.WebAPI.Controllers
             return Ok(result);
         }
 
-        [HttpGet("getById")]
-        public IActionResult GetById(Guid id)
-        {
-            var result = _lectureService.GetByIdDetail(id);
-
-            if (!result.Success)
-            {
-                return BadRequest(result);
-            }
-
-            return Ok(result);
-        }
-
-        [HttpGet("getByIdAsync")]
+        [HttpGet("{id}")]
         public async Task<IActionResult> GetByIdAsync(Guid id)
         {
             var result = await _lectureService.GetByIdDetailAsync(id);
@@ -169,53 +100,20 @@ namespace StudentAttendanceSystem.WebAPI.Controllers
             return Ok(result);
         }
 
-        [HttpGet("isExists")]
-        public async Task<IActionResult> IsExists(Guid id)
-        {
-            var result = await _lectureService.GetAsync();
-            if(result.Data == null)
-            {
-                return BadRequest(false);
-            }
+        //[HttpGet("isExists")]
+        //public async Task<IActionResult> IsExists(Guid id)
+        //{
+        //    var result = await _lectureService.GetAsync();
+        //    if(result.Data == null)
+        //    {
+        //        return BadRequest(false);
+        //    }
 
-            return Ok(true);
-        }
+        //    return Ok(true);
+        //}
 
-        [HttpPatch("update")]
-        public IActionResult Update(LectureUpdateDto dto)
-        {
-            var result = _lectureService.Update(new Lecture()
-            {
-                Departments = dto.DepartmentIds.Select(x => new Department()
-                {
-                    DepartmentId = x
-                }).ToList(),
-                LectureHours = dto.LectureHourIds.Select(x => new LectureHour()
-                {
-                    LectureHourId = x
-                }).ToList(),
-                Instructors = dto.InstructorIds.Select(x => new Instructor()
-                {
-                    InstructorId = x
-                }).ToList(),
-                Students = dto.StudentIds.Select(x => new Student()
-                {
-                    StudentId = x
-                }).ToList(),
-                LectureName = dto.LectureName,
-                LectureCode = dto.LectureCode,
-                LectureLanguage = dto.LectureLanguage,
-                LectureClassCode = dto.LectureClassCode,
-            });
-            if (!result.Success)
-            {
-                return BadRequest(result);
-            }
-            return Ok(result);
-        }
-
-        [HttpPatch("updateAsync")]
-        public async Task<IActionResult> UpdateAsync(LectureUpdateDto dto)
+        [HttpPatch("{id}")]
+        public async Task<IActionResult> UpdateAsync(Guid id, [FromBody] LectureUpdateDto dto)
         {
             var result = await _lectureService.UpdateAsync(new Lecture()
             {
@@ -235,10 +133,12 @@ namespace StudentAttendanceSystem.WebAPI.Controllers
                 {
                     StudentId = x
                 }).ToList(),
-                LectureName = dto.LectureName,
-                LectureCode = dto.LectureCode,
-                LectureLanguage = dto.LectureLanguage,
-                LectureClassCode = dto.LectureClassCode,
+                LectureName = dto.Name,
+                LectureCode = dto.Code,
+                LectureLanguage = dto.Language,
+                LectureClassCode = dto.ClassCode,
+                LectureDay = dto.Day,
+                LectureId = id
             });
             if (!result.Success)
             {

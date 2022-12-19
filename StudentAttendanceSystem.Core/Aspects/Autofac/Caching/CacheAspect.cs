@@ -28,7 +28,8 @@ namespace StudentAttendanceSystem.Core.Aspects.Autofac.Caching
 
         public override void Intercept(IInvocation invocation)
         {
-            var methodName = string.Format($"{invocation.Method.ReflectedType.FullName}.{invocation.Method.Name}");
+            var methodName = string.Format($"{invocation.Method.ReflectedType.Name}.{invocation.Method.Name}");
+            methodName = methodName.Replace("`1","");
             var arguments = invocation.Arguments.ToList();
             var key = $"{methodName}({string.Join(",", arguments.Select(x => x?.ToString() ?? "<Null>"))})";
             if (_cacheManager.IsAdd(key))

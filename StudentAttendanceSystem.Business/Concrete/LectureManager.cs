@@ -17,12 +17,14 @@ namespace StudentAttendanceSystem.Business.Concrete
         private readonly IDepartmentService _departmentService;
         private readonly ILectureHourService _lectureHourService;
         private readonly IInstructorService _instructorService;
-        public LectureManager(ILectureDal lectureDal, IDepartmentService departmentService, ILectureHourService lectureHourService, IInstructorService instructorService)
+        private readonly IStudentService _studentService;
+        public LectureManager(ILectureDal lectureDal, IDepartmentService departmentService, ILectureHourService lectureHourService, IInstructorService instructorService, IStudentService studentService)
         {
             _lectureDal = lectureDal;
             _departmentService = departmentService;
             _lectureHourService = lectureHourService;
             _instructorService = instructorService;
+            _studentService = studentService;
         }
         public IResult CheckIfLectureExists(Guid lectureId)
         {
@@ -88,6 +90,24 @@ namespace StudentAttendanceSystem.Business.Concrete
 
             return new SuccessResult();
         }
+        private IResult CheckIfStudentsAreExistedAndNotDuplicated(List<Guid> studentIds)
+        {
+            if (studentIds.Count != studentIds.Distinct().Count())
+            {
+                return new ErrorResult("Yazilan ogrenci ID degerlerinden birinden birden fazla yazildigi tespit edildi. Tekrar kontrol ediniz.");
+            }
+
+            foreach (var studentId in studentIds)
+            {
+                var student = _studentService.GetById(studentId).Data;
+                if (student == null)
+                {
+                    return new ErrorResult("Boyle bir ogrenci yok");
+                }
+            }
+
+            return new SuccessResult();
+        }
         private IResult CheckIfLectureHoursAreExistedAndNotDuplicated(List<Guid> lectureHourIds)
         {
             if (lectureHourIds.Count != lectureHourIds.Distinct().Count())
@@ -117,16 +137,16 @@ namespace StudentAttendanceSystem.Business.Concrete
         }
 
         [CacheRemoveAspect
-            ($"{nameof(ILectureService)}{nameof(Get)}," +
-            $"{nameof(ILectureService)}{nameof(GetAsync)}" +
-            $"{nameof(ILectureService)}{nameof(GetByDetail)}" +
-            $"{nameof(ILectureService)}{nameof(GetByDetailAsync)}" +
-            $"{nameof(ILectureService)}{nameof(GetById)}" +
-            $"{nameof(ILectureService)}{nameof(GetByIdAsync)}" +
-            $"{nameof(ILectureService)}{nameof(GetWhere)}" +
-            $"{nameof(ILectureService)}{nameof(GetWhereAsync)}" +
-            $"{nameof(ILectureService)}{nameof(GetSingle)}" +
-            $"{nameof(ILectureService)}{nameof(GetSingleAsync)}")]
+            ($"{nameof(IGenericService<Lecture>)}.{nameof(Get)}," +
+            $"{nameof(IGenericService<Lecture>)}.{nameof(GetAsync)}," +
+            $"{nameof(IGenericService<Lecture>)}.{nameof(GetByDetail)}," +
+            $"{nameof(IGenericService<Lecture>)}.{nameof(GetByDetailAsync)}," +
+            $"{nameof(IGenericService<Lecture>)}.{nameof(GetById)}," +
+            $"{nameof(IGenericService<Lecture>)}.{nameof(GetByIdAsync)}," +
+            $"{nameof(IGenericService<Lecture>)}.{nameof(GetWhere)}," +
+            $"{nameof(IGenericService<Lecture>)}.{nameof(GetWhereAsync)}," +
+            $"{nameof(IGenericService<Lecture>)}.{nameof(GetSingle)}," +
+            $"{nameof(IGenericService<Lecture>)}.{nameof(GetSingleAsync)}")]
         public IResult Add(Lecture lecture)
         {
             var result = BusinessRules.Run(
@@ -137,33 +157,21 @@ namespace StudentAttendanceSystem.Business.Concrete
 
             if (result != null) return result;
 
-            Lecture newLecture = new Lecture()
-            {
-                LectureId = new Guid(),
-                LectureName = lecture.LectureName,
-                LectureCode = lecture.LectureCode,
-                LectureLanguage = lecture.LectureLanguage,
-                LectureClassCode = lecture.LectureClassCode,
-                LectureHours = lecture.LectureHours,
-                Departments = lecture.Departments,
-                Instructors = lecture.Instructors
-            };
-
-            _lectureDal.Add(newLecture);
+            _lectureDal.Add(lecture);
 
             return new SuccessResult("Ders basariyla eklendi");
         }
         [CacheRemoveAspect
-            ($"{nameof(ILectureService)}{nameof(Get)}," +
-            $"{nameof(ILectureService)}{nameof(GetAsync)}" +
-            $"{nameof(ILectureService)}{nameof(GetByDetail)}" +
-            $"{nameof(ILectureService)}{nameof(GetByDetailAsync)}" +
-            $"{nameof(ILectureService)}{nameof(GetById)}" +
-            $"{nameof(ILectureService)}{nameof(GetByIdAsync)}" +
-            $"{nameof(ILectureService)}{nameof(GetWhere)}" +
-            $"{nameof(ILectureService)}{nameof(GetWhereAsync)}" +
-            $"{nameof(ILectureService)}{nameof(GetSingle)}" +
-            $"{nameof(ILectureService)}{nameof(GetSingleAsync)}")]
+            ($"{nameof(IGenericService<Lecture>)}.{nameof(Get)}," +
+            $"{nameof(IGenericService<Lecture>)}.{nameof(GetAsync)}," +
+            $"{nameof(IGenericService<Lecture>)}.{nameof(GetByDetail)}," +
+            $"{nameof(IGenericService<Lecture>)}.{nameof(GetByDetailAsync)}," +
+            $"{nameof(IGenericService<Lecture>)}.{nameof(GetById)}," +
+            $"{nameof(IGenericService<Lecture>)}.{nameof(GetByIdAsync)}," +
+            $"{nameof(IGenericService<Lecture>)}.{nameof(GetWhere)}," +
+            $"{nameof(IGenericService<Lecture>)}.{nameof(GetWhereAsync)}," +
+            $"{nameof(IGenericService<Lecture>)}.{nameof(GetSingle)}," +
+            $"{nameof(IGenericService<Lecture>)}.{nameof(GetSingleAsync)}")]
         public async Task<IResult> AddAsync(Lecture lecture)
         {
             var result = BusinessRules.Run(
@@ -174,33 +182,21 @@ namespace StudentAttendanceSystem.Business.Concrete
 
             if (result != null) return result;
 
-            Lecture newLecture = new Lecture()
-            {
-                LectureId = new Guid(),
-                LectureName = lecture.LectureName,
-                LectureCode = lecture.LectureCode,
-                LectureLanguage = lecture.LectureLanguage,
-                LectureClassCode = lecture.LectureClassCode,
-                LectureHours = lecture.LectureHours,
-                Departments = lecture.Departments,
-                Instructors = lecture.Instructors
-            };
-
-            await _lectureDal.AddAsync(newLecture);
+            await _lectureDal.AddAsync(lecture);
 
             return new SuccessResult("Ders basariyla eklendi");
         }
         [CacheRemoveAspect
-            ($"{nameof(ILectureService)}{nameof(Get)}," +
-            $"{nameof(ILectureService)}{nameof(GetAsync)}" +
-            $"{nameof(ILectureService)}{nameof(GetByDetail)}" +
-            $"{nameof(ILectureService)}{nameof(GetByDetailAsync)}" +
-            $"{nameof(ILectureService)}{nameof(GetById)}" +
-            $"{nameof(ILectureService)}{nameof(GetByIdAsync)}" +
-            $"{nameof(ILectureService)}{nameof(GetWhere)}" +
-            $"{nameof(ILectureService)}{nameof(GetWhereAsync)}" +
-            $"{nameof(ILectureService)}{nameof(GetSingle)}" +
-            $"{nameof(ILectureService)}{nameof(GetSingleAsync)}")]
+            ($"{nameof(IGenericService<Lecture>)}.{nameof(Get)}," +
+            $"{nameof(IGenericService<Lecture>)}.{nameof(GetAsync)}," +
+            $"{nameof(IGenericService<Lecture>)}.{nameof(GetByDetail)}," +
+            $"{nameof(IGenericService<Lecture>)}.{nameof(GetByDetailAsync)}," +
+            $"{nameof(IGenericService<Lecture>)}.{nameof(GetById)}," +
+            $"{nameof(IGenericService<Lecture>)}.{nameof(GetByIdAsync)}," +
+            $"{nameof(IGenericService<Lecture>)}.{nameof(GetWhere)}," +
+            $"{nameof(IGenericService<Lecture>)}.{nameof(GetWhereAsync)}," +
+            $"{nameof(IGenericService<Lecture>)}.{nameof(GetSingle)}," +
+            $"{nameof(IGenericService<Lecture>)}.{nameof(GetSingleAsync)}")]
         public IResult Delete(Guid id)
         {
             _lectureDal.Delete(_lectureDal.GetById(id));
@@ -209,16 +205,16 @@ namespace StudentAttendanceSystem.Business.Concrete
         }
 
         [CacheRemoveAspect
-            ($"{nameof(ILectureService)}{nameof(Get)}," +
-            $"{nameof(ILectureService)}{nameof(GetAsync)}" +
-            $"{nameof(ILectureService)}{nameof(GetByDetail)}" +
-            $"{nameof(ILectureService)}{nameof(GetByDetailAsync)}" +
-            $"{nameof(ILectureService)}{nameof(GetById)}" +
-            $"{nameof(ILectureService)}{nameof(GetByIdAsync)}" +
-            $"{nameof(ILectureService)}{nameof(GetWhere)}" +
-            $"{nameof(ILectureService)}{nameof(GetWhereAsync)}" +
-            $"{nameof(ILectureService)}{nameof(GetSingle)}" +
-            $"{nameof(ILectureService)}{nameof(GetSingleAsync)}")]
+            ($"{nameof(IGenericService<Lecture>)}.{nameof(Get)}," +
+            $"{nameof(IGenericService<Lecture>)}.{nameof(GetAsync)}," +
+            $"{nameof(IGenericService<Lecture>)}.{nameof(GetByDetail)}," +
+            $"{nameof(IGenericService<Lecture>)}.{nameof(GetByDetailAsync)}," +
+            $"{nameof(IGenericService<Lecture>)}.{nameof(GetById)}," +
+            $"{nameof(IGenericService<Lecture>)}.{nameof(GetByIdAsync)}," +
+            $"{nameof(IGenericService<Lecture>)}.{nameof(GetWhere)}," +
+            $"{nameof(IGenericService<Lecture>)}.{nameof(GetWhereAsync)}," +
+            $"{nameof(IGenericService<Lecture>)}.{nameof(GetSingle)}," +
+            $"{nameof(IGenericService<Lecture>)}.{nameof(GetSingleAsync)}")]
         public async Task<IResult> DeleteAsync(Guid id)
         {
             await _lectureDal.DeleteAsync(await _lectureDal.GetByIdAsync(id));
@@ -299,47 +295,45 @@ namespace StudentAttendanceSystem.Business.Concrete
         }
 
         [CacheRemoveAspect
-            ($"{nameof(ILectureService)}{nameof(Get)}," +
-            $"{nameof(ILectureService)}{nameof(GetAsync)}" +
-            $"{nameof(ILectureService)}{nameof(GetByDetail)}" +
-            $"{nameof(ILectureService)}{nameof(GetByDetailAsync)}" +
-            $"{nameof(ILectureService)}{nameof(GetById)}" +
-            $"{nameof(ILectureService)}{nameof(GetByIdAsync)}" +
-            $"{nameof(ILectureService)}{nameof(GetWhere)}" +
-            $"{nameof(ILectureService)}{nameof(GetWhereAsync)}" +
-            $"{nameof(ILectureService)}{nameof(GetSingle)}" +
-            $"{nameof(ILectureService)}{nameof(GetSingleAsync)}")]
+            ($"{nameof(IGenericService<Lecture>)}.{nameof(Get)}," +
+            $"{nameof(IGenericService<Lecture>)}.{nameof(GetAsync)}," +
+            $"{nameof(IGenericService<Lecture>)}.{nameof(GetByDetail)}," +
+            $"{nameof(IGenericService<Lecture>)}.{nameof(GetByDetailAsync)}," +
+            $"{nameof(IGenericService<Lecture>)}.{nameof(GetById)}," +
+            $"{nameof(IGenericService<Lecture>)}.{nameof(GetByIdAsync)}," +
+            $"{nameof(IGenericService<Lecture>)}.{nameof(GetWhere)}," +
+            $"{nameof(IGenericService<Lecture>)}.{nameof(GetWhereAsync)}," +
+            $"{nameof(IGenericService<Lecture>)}.{nameof(GetSingle)}," +
+            $"{nameof(IGenericService<Lecture>)}.{nameof(GetSingleAsync)}")]
         public IResult Update(Lecture lecture)
         {
-            var result = CheckIfLectureExists(lecture.LectureId);
+            var result = BusinessRules.Run(
+                CheckIfLectureExists(lecture.LectureId),
+                CheckIfLectureNameIsNotAlreadyTaken(lecture.LectureName),
+                CheckIfDepartmentsAreExistedAndNotDuplicated(lecture.Departments.Select(x => x.DepartmentId).ToList()),
+                CheckIfInstructorsAreExistedAndNotDuplicated(lecture.Instructors.Select(x => x.InstructorId).ToList()),
+                CheckIfStudentsAreExistedAndNotDuplicated(lecture.Students.Select(x => x.StudentId).ToList()),
+                CheckIfLectureHoursAreExistedAndNotDuplicated(lecture.LectureHours.Select(x => x.LectureHourId).ToList())
+                );
+
             if (!result.Success) return result;
 
-            Lecture updatedLecture = GetByIdDetail(lecture.LectureId).Data;
-
-            updatedLecture.LectureName = lecture.LectureName;
-            updatedLecture.LectureLanguage = lecture.LectureLanguage;
-            updatedLecture.LectureCode = lecture.LectureCode;
-            updatedLecture.Departments = lecture.Departments;
-            updatedLecture.LectureHours = lecture.LectureHours;
-            updatedLecture.Instructors = lecture.Instructors;
-            updatedLecture.Students = lecture.Students;
-
-            _lectureDal.Update(updatedLecture);
+            _lectureDal.Update(lecture);
 
             return new SuccessResult("Ders basariyla guncellendi");
         }
 
         [CacheRemoveAspect
-            ($"{nameof(IDepartmentService)}{nameof(Get)}," +
-            $"{nameof(IDepartmentService)}{nameof(GetAsync)}" +
-            $"{nameof(IDepartmentService)}{nameof(GetByDetail)}" +
-            $"{nameof(IDepartmentService)}{nameof(GetByDetailAsync)}" +
-            $"{nameof(IDepartmentService)}{nameof(GetById)}" +
-            $"{nameof(IDepartmentService)}{nameof(GetByIdAsync)}" +
-            $"{nameof(IDepartmentService)}{nameof(GetWhere)}" +
-            $"{nameof(IDepartmentService)}{nameof(GetWhereAsync)}" +
-            $"{nameof(IDepartmentService)}{nameof(GetSingle)}" +
-            $"{nameof(IDepartmentService)}{nameof(GetSingleAsync)}")]
+            ($"{nameof(IDepartmentService)}.{nameof(Get)}," +
+            $"{nameof(IDepartmentService)}.{nameof(GetAsync)}," +
+            $"{nameof(IDepartmentService)}.{nameof(GetByDetail)}," +
+            $"{nameof(IDepartmentService)}.{nameof(GetByDetailAsync)}," +
+            $"{nameof(IDepartmentService)}.{nameof(GetById)}," +
+            $"{nameof(IDepartmentService)}.{nameof(GetByIdAsync)}," +
+            $"{nameof(IDepartmentService)}.{nameof(GetWhere)}," +
+            $"{nameof(IDepartmentService)}.{nameof(GetWhereAsync)}," +
+            $"{nameof(IDepartmentService)}.{nameof(GetSingle)}," +
+            $"{nameof(IDepartmentService)}.{nameof(GetSingleAsync)}")]
         public async Task<IResult> UpdateAsync(Lecture lecture)
         {
             var result = CheckIfLectureExists(lecture.LectureId);

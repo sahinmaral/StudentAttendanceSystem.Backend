@@ -20,7 +20,7 @@ namespace StudentAttendanceSystem.Core.Utilities.Business
                 }
             }
 
-            return null;
+            return new SuccessResult();
         }
     }
 }

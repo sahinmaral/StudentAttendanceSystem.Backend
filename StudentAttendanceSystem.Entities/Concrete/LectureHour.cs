@@ -6,7 +6,10 @@ namespace StudentAttendanceSystem.Entities.Concrete
 {
     public class LectureHour:IEntity
     {
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public LectureHour()
+        {
+            LectureHourId = Guid.NewGuid();
+        }
         public Guid LectureHourId { get; set; }
         public TimeSpan LectureHourStartHour { get; set; }
         public TimeSpan LectureHourEndHour { get; set;}

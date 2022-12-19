@@ -1,4 +1,5 @@
 ﻿using StudentAttendanceSystem.Business.Abstract;
+using StudentAttendanceSystem.Core.Aspects.Autofac.Caching;
 using StudentAttendanceSystem.Core.Utilities.Business;
 using StudentAttendanceSystem.Core.Utilities.Results;
 using StudentAttendanceSystem.DataAccess.Abstract;
@@ -30,10 +31,10 @@ namespace StudentAttendanceSystem.Business.Concrete
 
             Student student = _studentService.GetSingle(x => x.StudentSchoolCard.StudentSchoolCardPhysicalUID == dto.StudentCardUID).Data;
 
-            DayOfWeek currentDayOfWeek = dto.StudentAttendanceLectureEnteredDateTime.DayOfWeek;
+            DayOfWeek currentDayOfWeek = dto.LectureEnteredDateTime.DayOfWeek;
             IEnumerable<Lecture> lectures = student.Lectures.Where(x => (int)x.LectureDay == (int)currentDayOfWeek);
 
-            TimeSpan currentTimeSpan = dto.StudentAttendanceLectureEnteredDateTime.TimeOfDay;
+            TimeSpan currentTimeSpan = dto.LectureEnteredDateTime.TimeOfDay;
 
             bool isLectureFound = false;
             Lecture currentLecture = null;
@@ -75,7 +76,7 @@ namespace StudentAttendanceSystem.Business.Concrete
                 StudentAttendanceType = StudentAttendanceType.Present
             };
 
-            _studentAttendanceDal.Add(studentAttendance);
+            Add(studentAttendance);
 
             return new SuccessResult("Derste var olarak kaydedildiniz");
         }
@@ -146,12 +147,13 @@ namespace StudentAttendanceSystem.Business.Concrete
 
             StudentAttendance studentAttendance = new StudentAttendance()
             {
-                StudentAttendanceEnteredDateTime = dto.StudentAttendanceEnteredDateTime,
+                StudentAttendanceEnteredDateTime = dto.EnteredDateTime,
                 Student = _studentService.GetById(dto.StudentId).Data,
                 Lecture = _lectureService.GetById(dto.LectureId).Data,
             };
-            
-            
+
+            Add(studentAttendance);
+
 
             return new SuccessResult("Secilen ogrenci var olarak kaydedildi");
         }
@@ -198,35 +200,25 @@ namespace StudentAttendanceSystem.Business.Concrete
             return new SuccessDataResult<List<StudentAttendance>>(await _studentAttendanceDal.GetAsync());
         }
 
-        //public IDataResult<List<StudentAttendance>> GetByDetail()
-        //{
-        //    return new SuccessDataResult<List<StudentAttendance>>(_studentAttendanceDal.GetByDetail());
-        //}
+        public IDataResult<List<StudentAttendance>> GetByDetail()
+        {
+            return new SuccessDataResult<List<StudentAttendance>>(_studentAttendanceDal.GetByDetail());
+        }
 
-        //public async Task<IDataResult<List<StudentAttendance>>> GetByDetailAsync()
-        //{
-        //    return new SuccessDataResult<List<StudentAttendance>>(await _studentAttendanceDal.GetByDetailAsync());
-        //}
+        public async Task<IDataResult<List<StudentAttendance>>> GetByDetailAsync()
+        {
+            return new SuccessDataResult<List<StudentAttendance>>(await _studentAttendanceDal.GetByDetailAsync());
+        }
 
-        //public IDataResult<StudentAttendance> GetById(Guid id)
-        //{
-        //    return new SuccessDataResult<StudentAttendance>(_studentAttendanceDal.GetById(id));
-        //}
+        public IDataResult<StudentAttendance> GetByIdDetail(Guid id)
+        {
+            return new SuccessDataResult<StudentAttendance>(_studentAttendanceDal.GetByIdDetail(id));
+        }
 
-        //public async Task<IDataResult<StudentAttendance>> GetByIdAsync(Guid id)
-        //{
-        //    return new SuccessDataResult<StudentAttendance>(await _studentAttendanceDal.GetByIdAsync(id));
-        //}
-
-        //public IDataResult<StudentAttendance> GetByIdDetail(Guid id)
-        //{
-        //    return new SuccessDataResult<StudentAttendance>(_studentAttendanceDal.GetByIdDetail(id));
-        //}
-
-        //public async Task<IDataResult<StudentAttendance>> GetByIdDetailAsync(Guid id)
-        //{
-        //    return new SuccessDataResult<StudentAttendance>(await _studentAttendanceDal.GetByIdDetailAsync(id));
-        //}
+        public async Task<IDataResult<StudentAttendance>> GetByIdDetailAsync(Guid id)
+        {
+            return new SuccessDataResult<StudentAttendance>(await _studentAttendanceDal.GetByIdDetailAsync(id));
+        }
 
         public IDataResult<StudentAttendance> GetSingle(Expression<Func<StudentAttendance, bool>> predicate)
         {
@@ -312,24 +304,80 @@ namespace StudentAttendanceSystem.Business.Concrete
             return new SuccessResult();
         }
 
-        public IResult Add(StudentAttendance entity)
+        [CacheRemoveAspect
+            ($"{nameof(IDepartmentService)}{nameof(Get)}," +
+            $"{nameof(IDepartmentService)}{nameof(GetAsync)}" +
+            $"{nameof(IDepartmentService)}{nameof(GetByDetail)}" +
+            $"{nameof(IDepartmentService)}{nameof(GetByDetailAsync)}" +
+            $"{nameof(IDepartmentService)}{nameof(GetById)}" +
+            $"{nameof(IDepartmentService)}{nameof(GetByIdAsync)}" +
+            $"{nameof(IDepartmentService)}{nameof(GetWhere)}" +
+            $"{nameof(IDepartmentService)}{nameof(GetWhereAsync)}" +
+            $"{nameof(IDepartmentService)}{nameof(GetSingle)}" +
+            $"{nameof(IDepartmentService)}{nameof(GetSingleAsync)}")]
+        public IResult Add(StudentAttendance department)
         {
-            throw new NotImplementedException();
+            _studentAttendanceDal.Add(department);
+
+            return new SuccessResult();
+        }
+        [CacheRemoveAspect
+            ($"{nameof(IDepartmentService)}{nameof(Get)}," +
+            $"{nameof(IDepartmentService)}{nameof(GetAsync)}" +
+            $"{nameof(IDepartmentService)}{nameof(GetByDetail)}" +
+            $"{nameof(IDepartmentService)}{nameof(GetByDetailAsync)}" +
+            $"{nameof(IDepartmentService)}{nameof(GetById)}" +
+            $"{nameof(IDepartmentService)}{nameof(GetByIdAsync)}" +
+            $"{nameof(IDepartmentService)}{nameof(GetWhere)}" +
+            $"{nameof(IDepartmentService)}{nameof(GetWhereAsync)}" +
+            $"{nameof(IDepartmentService)}{nameof(GetSingle)}" +
+            $"{nameof(IDepartmentService)}{nameof(GetSingleAsync)}")]
+        public async Task<IResult> AddAsync(StudentAttendance department)
+        {
+            await _studentAttendanceDal.AddAsync(department);
+
+            return new SuccessResult();
         }
 
-        public Task<IResult> AddAsync(StudentAttendance entity)
+        public IResult Update(StudentAttendance studentAttendance)
         {
-            throw new NotImplementedException();
+            var result = CheckIfStudentAttendanceExisted(studentAttendance.StudentAttendanceId);
+            if (!result.Success) return result;
+
+            StudentAttendance updatedStudentAttendance = GetByIdDetail(studentAttendance.StudentAttendanceId).Data;
+
+            updatedStudentAttendance.StudentAttendanceType = studentAttendance.StudentAttendanceType;
+            updatedStudentAttendance.StudentAttendanceEnteredDateTime = studentAttendance.StudentAttendanceEnteredDateTime;
+
+            _studentAttendanceDal.Update(updatedStudentAttendance);
+
+            return new SuccessResult("Ogrencinin yoklamasi basariyla guncellendi");
         }
 
-        public IResult Update(StudentAttendance entity)
+        [CacheRemoveAspect
+            ($"{nameof(IDepartmentService)}{nameof(Get)}," +
+            $"{nameof(IDepartmentService)}{nameof(GetAsync)}" +
+            $"{nameof(IDepartmentService)}{nameof(GetByDetail)}" +
+            $"{nameof(IDepartmentService)}{nameof(GetByDetailAsync)}" +
+            $"{nameof(IDepartmentService)}{nameof(GetById)}" +
+            $"{nameof(IDepartmentService)}{nameof(GetByIdAsync)}" +
+            $"{nameof(IDepartmentService)}{nameof(GetWhere)}" +
+            $"{nameof(IDepartmentService)}{nameof(GetWhereAsync)}" +
+            $"{nameof(IDepartmentService)}{nameof(GetSingle)}" +
+            $"{nameof(IDepartmentService)}{nameof(GetSingleAsync)}")]
+        public async Task<IResult> UpdateAsync(StudentAttendance studentAttendance)
         {
-            throw new NotImplementedException();
-        }
+            var result = CheckIfStudentAttendanceExisted(studentAttendance.StudentAttendanceId);
+            if (!result.Success) return result;
 
-        public Task<IResult> UpdateAsync(StudentAttendance entity)
-        {
-            throw new NotImplementedException();
+            StudentAttendance updatedStudentAttendance = GetByIdDetail(studentAttendance.StudentAttendanceId).Data;
+
+            updatedStudentAttendance.StudentAttendanceType = studentAttendance.StudentAttendanceType;
+            updatedStudentAttendance.StudentAttendanceEnteredDateTime = studentAttendance.StudentAttendanceEnteredDateTime;
+
+            await _studentAttendanceDal.UpdateAsync(updatedStudentAttendance);
+
+            return new SuccessResult("Ogrencinin yoklamasi basariyla guncellendi");
         }
     }
 }

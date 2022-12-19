@@ -1,5 +1,6 @@
 ﻿using StudentAttendanceSystem.Core.Entities.Abstract;
 using StudentAttendanceSystem.Core.Utilities.Results;
+using StudentAttendanceSystem.Entities.Concrete;
 
 using System.Linq.Expressions;
 
@@ -21,5 +22,9 @@ namespace StudentAttendanceSystem.Business.Abstract
         Task<IResult> AddAsync(T entity);
         IResult Update(T entity);
         Task<IResult> UpdateAsync(T entity);
+        IDataResult<List<T>> GetByDetail();
+        Task<IDataResult<List<T>>> GetByDetailAsync();
+        IDataResult<T> GetByIdDetail(Guid id);
+        Task<IDataResult<T>> GetByIdDetailAsync(Guid id);
     }
 }

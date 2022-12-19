@@ -7,7 +7,10 @@ namespace StudentAttendanceSystem.Entities.Concrete
 {
     public class StudentAttendance:IEntity
     {
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public StudentAttendance()
+        {
+            StudentAttendanceId = Guid.NewGuid();
+        }
         public Guid StudentAttendanceId { get; set; }
         public DateTime StudentAttendanceEnteredDateTime { get; set; }
         public Student Student { get; set; }

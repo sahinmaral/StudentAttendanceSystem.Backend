@@ -22,6 +22,10 @@ namespace StudentAttendanceSystem.Core.DataAccess
         Task UpdateAsync(T entity);
         void Delete(T entity);
         Task DeleteAsync(T entity);
+        List<T> GetByDetail();
+        Task<List<T>> GetByDetailAsync();
+        T GetByIdDetail(Guid id);
+        Task<T> GetByIdDetailAsync(Guid id);
 
     }
 }

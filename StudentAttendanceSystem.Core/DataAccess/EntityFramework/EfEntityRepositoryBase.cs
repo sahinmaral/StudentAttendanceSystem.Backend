@@ -7,11 +7,11 @@ using System.Linq.Expressions;
 
 namespace StudentAttendanceSystem.DataAccess.Concrete.EntityFramework
 {
-    public class EfEntityRepositoryBase<TEntity, TContext> 
-        where TEntity : class, IEntity, new() 
+    public class EfEntityRepositoryBase<TEntity, TContext>
+        where TEntity : class, IEntity, new()
         where TContext : DbContext, new()
     {
-        
+
         public List<TEntity> Get()
         {
             using (TContext context = new TContext())
@@ -80,8 +80,7 @@ namespace StudentAttendanceSystem.DataAccess.Concrete.EntityFramework
         {
             using (TContext context = new TContext())
             {
-                var addedEntity = context.Entry(entity);
-                addedEntity.State = EntityState.Added;
+                context.Set<TEntity>().Add(entity);
                 context.SaveChanges();
             }
         }
@@ -90,8 +89,7 @@ namespace StudentAttendanceSystem.DataAccess.Concrete.EntityFramework
         {
             using (TContext context = new TContext())
             {
-                var addedEntity = context.Entry(entity);
-                addedEntity.State = EntityState.Added;
+                context.Set<TEntity>().Add(entity);
                 await context.SaveChangesAsync();
             }
         }
@@ -100,8 +98,7 @@ namespace StudentAttendanceSystem.DataAccess.Concrete.EntityFramework
         {
             using (TContext context = new TContext())
             {
-                var deletedEntity = context.Entry(entity);
-                deletedEntity.State = EntityState.Deleted;
+                context.Set<TEntity>().Remove(entity);
                 context.SaveChanges();
             }
         }
@@ -110,8 +107,7 @@ namespace StudentAttendanceSystem.DataAccess.Concrete.EntityFramework
         {
             using (TContext context = new TContext())
             {
-                var addedEntity = context.Entry(entity);
-                addedEntity.State = EntityState.Deleted;
+                context.Set<TEntity>().Remove(entity);
                 await context.SaveChangesAsync();
             }
         }
@@ -120,8 +116,7 @@ namespace StudentAttendanceSystem.DataAccess.Concrete.EntityFramework
         {
             using (TContext context = new TContext())
             {
-                var updatedEntity = context.Entry(entity);
-                updatedEntity.State = EntityState.Modified;
+                context.Set<TEntity>().Update(entity);
                 context.SaveChanges();
             }
         }
@@ -130,8 +125,7 @@ namespace StudentAttendanceSystem.DataAccess.Concrete.EntityFramework
         {
             using (TContext context = new TContext())
             {
-                var updatedEntity = context.Entry(entity);
-                updatedEntity.State = EntityState.Modified;
+                context.Set<TEntity>().Update(entity);
                 await context.SaveChangesAsync();
             }
         }

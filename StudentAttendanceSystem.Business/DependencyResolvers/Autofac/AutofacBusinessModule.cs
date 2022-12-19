@@ -18,6 +18,8 @@ using StudentAttendanceSystem.Core.Aspects.Autofac.Caching;
 using Autofac.Extras.DynamicProxy;
 using Castle.DynamicProxy;
 using StudentAttendanceSystem.Core.Utilities.Interceptors;
+using InstructorAttendanceSystem.Business.Concrete;
+using LectureHourAttendanceSystem.Business.Concrete;
 
 namespace StudentAttendanceSystem.Business.DependencyResolvers.Autofac
 {
@@ -33,12 +35,16 @@ namespace StudentAttendanceSystem.Business.DependencyResolvers.Autofac
             builder.RegisterType<EfStudentAttendanceDal>().As<IStudentAttendanceDal>().SingleInstance();
             builder.RegisterType<EfStudentSchoolCardDal>().As<IStudentSchoolCardDal>().SingleInstance();
             builder.RegisterType<EfStudentDal>().As<IStudentDal>().SingleInstance();
+            builder.RegisterType<EfFacultyDal>().As<IFacultyDal>().SingleInstance();
 
             builder.RegisterType<LectureManager>().As<ILectureService>().SingleInstance();
             builder.RegisterType<StudentAttendanceManager>().As<IStudentAttendanceService>().SingleInstance();
             builder.RegisterType<DepartmentManager>().As<IDepartmentService>().SingleInstance();
-
-
+            builder.RegisterType<StudentManager>().As<IStudentService>().SingleInstance();
+            builder.RegisterType<InstructorManager>().As<IInstructorService>().SingleInstance();
+            builder.RegisterType<LectureHourManager>().As<ILectureHourService>().SingleInstance();
+            builder.RegisterType<StudentSchoolCardManager>().As<IStudentSchoolCardService>().SingleInstance();
+            builder.RegisterType<FacultyManager>().As<IFacultyService>().SingleInstance();
 
             // Register all aspects to interfaces that registered previously 
 

@@ -56,7 +56,7 @@ namespace StudentAttendanceSystem.DataAccess.Concrete.EntityFramework
                     context.Entry(x).State = EntityState.Unchanged;
                 });
 
-                await base.AddAsync(entity);
+                await context.SaveChangesAsync();
 
             }
         }
@@ -66,33 +66,37 @@ namespace StudentAttendanceSystem.DataAccess.Concrete.EntityFramework
             using (StudentAttendanceSystemAppDbContext context = new StudentAttendanceSystemAppDbContext())
             {
 
-                var unchangedEntity = GetByIdDetail(entity.LectureId);
-                context.Entry(unchangedEntity).State = EntityState.Unchanged;
+                var updatedEntity = GetByIdDetail(entity.LectureId);
+                context.Entry(updatedEntity).State = EntityState.Modified;
+
+                updatedEntity.LectureName = entity.LectureName;
+                updatedEntity.LectureLanguage = entity.LectureLanguage;
+                updatedEntity.LectureCode = entity.LectureCode;
 
                 #region Department Navigation Property Update 
 
-                unchangedEntity.Departments.ForEach((x) =>
+                updatedEntity.Departments.ForEach((x) =>
                 {
                     context.Entry(x).State = EntityState.Unchanged;
                 });
 
-                var unchangedEntityDepartmentDictionary = unchangedEntity.Departments.ToDictionary(x => x.DepartmentId);
+                var updatedEntityDepartmentDictionary = updatedEntity.Departments.ToDictionary(x => x.DepartmentId);
                 var entityDepartmentDictionary = entity.Departments.ToDictionary(x => x.DepartmentId);
 
-                foreach (var key in unchangedEntityDepartmentDictionary.Keys)
+                foreach (var key in updatedEntityDepartmentDictionary.Keys)
                 {
                     if (!entityDepartmentDictionary.TryGetValue(key, out _))
                     {
-                        unchangedEntity.Departments.Remove(context.Departments.Single(x => x.DepartmentId == key));
+                        updatedEntity.Departments.Remove(context.Departments.Single(x => x.DepartmentId == key));
                     }
                 }
 
 
                 foreach (var key in entityDepartmentDictionary.Keys)
                 {
-                    if (!unchangedEntityDepartmentDictionary.TryGetValue(key, out _))
+                    if (!updatedEntityDepartmentDictionary.TryGetValue(key, out _))
                     {
-                        unchangedEntity.Departments.Add(context.Departments.Single(x => x.DepartmentId == key));
+                        updatedEntity.Departments.Add(context.Departments.Single(x => x.DepartmentId == key));
                     }
                 }
 
@@ -100,81 +104,81 @@ namespace StudentAttendanceSystem.DataAccess.Concrete.EntityFramework
 
                 #region Instructor Navigation Property Update
 
-                unchangedEntity.Instructors.ForEach((x) =>
+                updatedEntity.Instructors.ForEach((x) =>
                 {
                     context.Entry(x).State = EntityState.Unchanged;
                 });
 
-                var unchangedEntityInstructorDictionary = unchangedEntity.Instructors.ToDictionary(x => x.InstructorId);
+                var updatedEntityInstructorDictionary = updatedEntity.Instructors.ToDictionary(x => x.InstructorId);
                 var entityInstructorDictionary = entity.Instructors.ToDictionary(x => x.InstructorId);
 
-                foreach (var key in unchangedEntityInstructorDictionary.Keys)
+                foreach (var key in updatedEntityInstructorDictionary.Keys)
                 {
                     if (!entityInstructorDictionary.TryGetValue(key, out _))
                     {
-                        unchangedEntity.Instructors.Remove(context.Instructors.Single(x => x.InstructorId == key));
+                        updatedEntity.Instructors.Remove(context.Instructors.Single(x => x.InstructorId == key));
                     }
                 }
 
                 foreach (var key in entityInstructorDictionary.Keys)
                 {
-                    if (!unchangedEntityInstructorDictionary.TryGetValue(key, out _))
+                    if (!updatedEntityInstructorDictionary.TryGetValue(key, out _))
                     {
-                        unchangedEntity.Instructors.Add(context.Instructors.Single(x => x.InstructorId == key));
+                        updatedEntity.Instructors.Add(context.Instructors.Single(x => x.InstructorId == key));
                     }
                 }
                 #endregion
 
                 #region LectureHour Navigation Property Update
 
-                unchangedEntity.LectureHours.ForEach((x) =>
+                updatedEntity.LectureHours.ForEach((x) =>
                 {
                     context.Entry(x).State = EntityState.Unchanged;
                 });
 
-                var unchangedEntityLectureHourDictionary = unchangedEntity.LectureHours.ToDictionary(x => x.LectureHourId);
+                var updatedEntityLectureHourDictionary = updatedEntity.LectureHours.ToDictionary(x => x.LectureHourId);
                 var entityLectureHourDictionary = entity.LectureHours.ToDictionary(x => x.LectureHourId);
 
-                foreach (var key in unchangedEntityLectureHourDictionary.Keys)
+                foreach (var key in updatedEntityLectureHourDictionary.Keys)
                 {
                     if (!entityLectureHourDictionary.TryGetValue(key, out _))
                     {
-                        unchangedEntity.LectureHours.Remove(context.LectureHours.Single(x => x.LectureHourId == key));
+                        updatedEntity.LectureHours.Remove(context.LectureHours.Single(x => x.LectureHourId == key));
                     }
                 }
 
                 foreach (var key in entityLectureHourDictionary.Keys)
                 {
-                    if (!unchangedEntityLectureHourDictionary.TryGetValue(key, out _))
+                    if (!updatedEntityLectureHourDictionary.TryGetValue(key, out _))
                     {
-                        unchangedEntity.LectureHours.Add(context.LectureHours.Single(x => x.LectureHourId == key));
+                        updatedEntity.LectureHours.Add(context.LectureHours.Single(x => x.LectureHourId == key));
                     }
                 }
                 #endregion
 
                 #region Student Navigation Property Update
 
-                unchangedEntity.Students.ForEach((x) =>
+                updatedEntity.Students.ForEach((x) =>
                 {
                     context.Entry(x).State = EntityState.Unchanged;
                 });
 
-                var unchangedEntityStudentDictionary = unchangedEntity.Students.ToDictionary(x => x.StudentId);
+                var updatedEntityStudentDictionary = updatedEntity.Students.ToDictionary(x => x.StudentId);
                 var entityStudentDictionary = entity.Students.ToDictionary(x => x.StudentId);
 
-                foreach (var key in unchangedEntityStudentDictionary.Keys)
+                foreach (var key in updatedEntityStudentDictionary.Keys)
                 {
                     if (!entityStudentDictionary.TryGetValue(key, out _))
                     {
-                        unchangedEntity.Students.Remove(context.Students.Single(x => x.User.UserId == key));
+                        updatedEntity.Students.Remove(context.Students.Single(x => x.User.UserId == key));
                     }
                 }
 
                 foreach (var key in entityStudentDictionary.Keys)
                 {
-                    if (!unchangedEntityStudentDictionary.TryGetValue(key, out _))
+                    if (!updatedEntityStudentDictionary.TryGetValue(key, out _))
                     {
-                        unchangedEntity.Students.Add(context.Students.Single(x => x.User.UserId == key));
+                        updatedEntity.Students.Add(context.Students.Single(x => x.User.UserId == key));
                     }
                 }
                 #endregion
@@ -188,33 +192,37 @@ namespace StudentAttendanceSystem.DataAccess.Concrete.EntityFramework
         {
             using (StudentAttendanceSystemAppDbContext context = new StudentAttendanceSystemAppDbContext())
             {
-                var unchangedEntity = GetByIdDetail(entity.LectureId);
-                context.Entry(unchangedEntity).State = EntityState.Unchanged;
+                var updatedEntity = GetByIdDetail(entity.LectureId);
+                context.Entry(updatedEntity).State = EntityState.Modified;
+
+                updatedEntity.LectureName = entity.LectureName;
+                updatedEntity.LectureLanguage = entity.LectureLanguage;
+                updatedEntity.LectureCode = entity.LectureCode;
 
                 #region Department Navigation Property Update 
 
-                unchangedEntity.Departments.ForEach((x) =>
+                updatedEntity.Departments.ForEach((x) =>
                 {
                     context.Entry(x).State = EntityState.Unchanged;
                 });
 
-                var unchangedEntityDepartmentDictionary = unchangedEntity.Departments.ToDictionary(x => x.DepartmentId);
+                var updatedEntityDepartmentDictionary = updatedEntity.Departments.ToDictionary(x => x.DepartmentId);
                 var entityDepartmentDictionary = entity.Departments.ToDictionary(x => x.DepartmentId);
 
-                foreach (var key in unchangedEntityDepartmentDictionary.Keys)
+                foreach (var key in updatedEntityDepartmentDictionary.Keys)
                 {
                     if (!entityDepartmentDictionary.TryGetValue(key, out _))
                     {
-                        unchangedEntity.Departments.Remove(context.Departments.Single(x => x.DepartmentId == key));
+                        updatedEntity.Departments.Remove(context.Departments.Single(x => x.DepartmentId == key));
                     }
                 }
 
 
                 foreach (var key in entityDepartmentDictionary.Keys)
                 {
-                    if (!unchangedEntityDepartmentDictionary.TryGetValue(key, out _))
+                    if (!updatedEntityDepartmentDictionary.TryGetValue(key, out _))
                     {
-                        unchangedEntity.Departments.Add(context.Departments.Single(x => x.DepartmentId == key));
+                        updatedEntity.Departments.Add(context.Departments.Single(x => x.DepartmentId == key));
                     }
                 }
 
@@ -222,81 +230,81 @@ namespace StudentAttendanceSystem.DataAccess.Concrete.EntityFramework
 
                 #region Instructor Navigation Property Update
 
-                unchangedEntity.Instructors.ForEach((x) =>
+                updatedEntity.Instructors.ForEach((x) =>
                 {
                     context.Entry(x).State = EntityState.Unchanged;
                 });
 
-                var unchangedEntityInstructorDictionary = unchangedEntity.Instructors.ToDictionary(x => x.InstructorId);
+                var updatedEntityInstructorDictionary = updatedEntity.Instructors.ToDictionary(x => x.InstructorId);
                 var entityInstructorDictionary = entity.Instructors.ToDictionary(x => x.InstructorId);
 
-                foreach (var key in unchangedEntityInstructorDictionary.Keys)
+                foreach (var key in updatedEntityInstructorDictionary.Keys)
                 {
                     if (!entityInstructorDictionary.TryGetValue(key, out _))
                     {
-                        unchangedEntity.Instructors.Remove(context.Instructors.Single(x => x.InstructorId == key));
+                        updatedEntity.Instructors.Remove(context.Instructors.Single(x => x.InstructorId == key));
                     }
                 }
 
                 foreach (var key in entityInstructorDictionary.Keys)
                 {
-                    if (!unchangedEntityInstructorDictionary.TryGetValue(key, out _))
+                    if (!updatedEntityInstructorDictionary.TryGetValue(key, out _))
                     {
-                        unchangedEntity.Instructors.Add(context.Instructors.Single(x => x.InstructorId == key));
+                        updatedEntity.Instructors.Add(context.Instructors.Single(x => x.InstructorId == key));
                     }
                 }
                 #endregion
 
                 #region LectureHour Navigation Property Update
 
-                unchangedEntity.LectureHours.ForEach((x) =>
+                updatedEntity.LectureHours.ForEach((x) =>
                 {
                     context.Entry(x).State = EntityState.Unchanged;
                 });
 
-                var unchangedEntityLectureHourDictionary = unchangedEntity.LectureHours.ToDictionary(x => x.LectureHourId);
+                var updatedEntityLectureHourDictionary = updatedEntity.LectureHours.ToDictionary(x => x.LectureHourId);
                 var entityLectureHourDictionary = entity.LectureHours.ToDictionary(x => x.LectureHourId);
 
-                foreach (var key in unchangedEntityLectureHourDictionary.Keys)
+                foreach (var key in updatedEntityLectureHourDictionary.Keys)
                 {
                     if (!entityLectureHourDictionary.TryGetValue(key, out _))
                     {
-                        unchangedEntity.LectureHours.Remove(context.LectureHours.Single(x => x.LectureHourId == key));
+                        updatedEntity.LectureHours.Remove(context.LectureHours.Single(x => x.LectureHourId == key));
                     }
                 }
 
                 foreach (var key in entityLectureHourDictionary.Keys)
                 {
-                    if (!unchangedEntityLectureHourDictionary.TryGetValue(key, out _))
+                    if (!updatedEntityLectureHourDictionary.TryGetValue(key, out _))
                     {
-                        unchangedEntity.LectureHours.Add(context.LectureHours.Single(x => x.LectureHourId == key));
+                        updatedEntity.LectureHours.Add(context.LectureHours.Single(x => x.LectureHourId == key));
                     }
                 }
                 #endregion
 
                 #region Student Navigation Property Update
 
-                unchangedEntity.Students.ForEach((x) =>
+                updatedEntity.Students.ForEach((x) =>
                 {
                     context.Entry(x).State = EntityState.Unchanged;
                 });
 
-                var unchangedEntityStudentDictionary = unchangedEntity.Students.ToDictionary(x => x.StudentId);
+                var updatedEntityStudentDictionary = updatedEntity.Students.ToDictionary(x => x.StudentId);
                 var entityStudentDictionary = entity.Students.ToDictionary(x => x.StudentId);
 
-                foreach (var key in unchangedEntityStudentDictionary.Keys)
+                foreach (var key in updatedEntityStudentDictionary.Keys)
                 {
                     if (!entityStudentDictionary.TryGetValue(key, out _))
                     {
-                        unchangedEntity.Students.Remove(context.Students.Single(x => x.User.UserId == key));
+                        updatedEntity.Students.Remove(context.Students.Single(x => x.User.UserId == key));
                     }
                 }
 
                 foreach (var key in entityStudentDictionary.Keys)
                 {
-                    if (!unchangedEntityStudentDictionary.TryGetValue(key, out _))
+                    if (!updatedEntityStudentDictionary.TryGetValue(key, out _))
                     {
-                        unchangedEntity.Students.Add(context.Students.Single(x => x.User.UserId == key));
+                        updatedEntity.Students.Add(context.Students.Single(x => x.User.UserId == key));
                     }
                 }
                 #endregion

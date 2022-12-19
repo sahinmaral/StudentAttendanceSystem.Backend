@@ -13,9 +13,5 @@ namespace StudentAttendanceSystem.DataAccess.Abstract
 {
     public interface ILectureDal:IEntityRepository<Lecture>
     {
-        List<Lecture> GetByDetail();
-        Task<List<Lecture>> GetByDetailAsync();
-        Lecture GetByIdDetail(Guid id);
-        Task<Lecture> GetByIdDetailAsync(Guid id);
     }
 }
